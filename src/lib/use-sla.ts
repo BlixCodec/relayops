@@ -1,39 +1,46 @@
 "use client";
 
 // Live SLA countdown. slaMinutesRemaining in the seed data is anchored to
-// page load; this hook ticks elapsed minutes forward so every SLA readout
-// counts down in real time. Display math only — store state never mutates.
+// page load; this hook ticks elapsed seconds forward so every SLA readout
+// counts down visibly (mm:ss). Display math only — store state never mutates.
 
 import { useEffect, useState } from "react";
 import type { Exception } from "@/lib/types";
 
 const loadedAt = Date.now();
 
-export function useMinutesElapsed(): number {
+export function useSecondsElapsed(): number {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     const update = () =>
-      setElapsed(Math.floor((Date.now() - loadedAt) / 60_000));
+      setElapsed(Math.floor((Date.now() - loadedAt) / 1000));
     update();
-    const id = setInterval(update, 15_000); // recheck often, re-render per minute
+    const id = setInterval(update, 1000);
     return () => clearInterval(id);
   }, []);
   return elapsed;
 }
 
 export interface SlaInfo {
-  /** Minutes left, clamped at 0. Null when the exception is resolved. */
-  minutes: number | null;
+  /** Seconds left, clamped at 0. Null when the exception is resolved. */
+  seconds: number | null;
   met: boolean;
   breached: boolean;
   /** Under an hour (or breached) — render red. */
   urgent: boolean;
 }
 
-export function slaInfo(e: Exception, elapsedMinutes: number): SlaInfo {
+export function slaInfo(e: Exception, elapsedSeconds: number): SlaInfo {
   if (e.status === "resolved")
-    return { minutes: null, met: true, breached: false, urgent: false };
-  const minutes = Math.max(0, e.slaMinutesRemaining - elapsedMinutes);
-  const breached = minutes === 0;
-  return { minutes, met: false, breached, urgent: breached || minutes < 60 };
+    return { seconds: null, met: true, breached: false, urgent: false };
+  const seconds = Math.max(0, e.slaMinutesRemaining * 60 - elapsedSeconds);
+  const breached = seconds === 0;
+  return { seconds, met: false, breached, urgent: breached || seconds < 3600 };
+}
+
+/** 2512 -> "41:52" (minutes:seconds, tabular-nums friendly). */
+export function formatSlaClock(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
 }

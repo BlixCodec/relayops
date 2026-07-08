@@ -86,11 +86,12 @@ shows East at 2 open (live count) rather than the stale seeded 5.
 ## Addendum: live SLA countdown
 
 The spec's "SLA countdown" now actually counts down (`src/lib/use-sla.ts`):
-displayed minutes derive from page-load elapsed time, ticking once per minute
-across cards, drawer, and decision rows — store state never mutates. At zero
-the readout clamps to **"SLA breached"** in red. Verified live: 81 s after
-load, readings moved 42→41, 60→59, 95→94, and the 59-minute row crossed the
-under-60 threshold and turned red.
+displayed time derives from page-load elapsed seconds, rendered mm:ss and
+ticking every second across cards, drawer, and decision rows — store state
+never mutates. At zero the readout clamps to **"SLA breached"** in red; the
+under-60-minute red threshold applies to the live value. Verified live:
+readings moved 41:47 → 41:44 → 41:42 across a 5-second watch, and a row
+crossing the 60-minute mark turned red.
 
 ## What's deliberately untested
 
