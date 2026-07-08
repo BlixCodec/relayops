@@ -245,7 +245,7 @@ export function useRelay() {
 
     resolve(exceptionId: string) {
       dispatch({ type: "resolve", exceptionId, time: nowHHMM() });
-      toast.success("Resolved and logged — the timeline tells the full story.");
+      toast.success("Resolved — moved to Resolved today; timeline complete.");
     },
   };
 }

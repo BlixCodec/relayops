@@ -13,7 +13,7 @@ const confidenceLabels = {
 
 export function AiInsightCard({ suggestion }: { suggestion: AiSuggestion }) {
   return (
-    <div className="rounded-lg border border-violet-200 bg-violet-50 p-4">
+    <div className="rounded-xl border border-violet-200 bg-violet-50 p-4">
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-violet-700">
           <Sparkles className="size-3.5" aria-hidden />
@@ -26,12 +26,12 @@ export function AiInsightCard({ suggestion }: { suggestion: AiSuggestion }) {
       <p className="mt-2 text-sm font-semibold text-slate-900">
         {suggestion.action}
       </p>
-      <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-slate-500">
+      <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-slate-600">
         {suggestion.reasons.map((reason) => (
           <li key={reason}>{reason}</li>
         ))}
       </ul>
-      <p className="mt-3 text-xs text-violet-700/70">
+      <p className="mt-3 text-xs text-violet-700">
         Rule-based stub — in production, confidence derives from certification
         match, travel time, and SLA headroom.
       </p>

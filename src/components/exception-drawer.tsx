@@ -4,7 +4,7 @@
 // dispatcher actions (Assign / Escalate / Resolve) render only for the
 // dispatcher. Contains the audit timeline per docs/decision-doc.md.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -30,6 +30,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import ArrowNarrowUpIcon from "@/components/ui/arrow-narrow-up-icon";
+import SendIcon from "@/components/ui/send-icon";
+import type { AnimatedIconHandle } from "@/components/ui/types";
 import { AiInsightCard } from "@/components/ai-insight-card";
 import { AuditTimeline } from "@/components/audit-timeline";
 import { PriorityBadge } from "@/components/priority-badge";
@@ -63,6 +66,8 @@ export function ExceptionDrawer({
   const [reason, setReason] = useState("");
   const [approval, setApproval] = useState<ApprovalType | "">("");
   const secondsElapsed = useSecondsElapsed();
+  const escalateIconRef = useRef<AnimatedIconHandle>(null);
+  const sendIconRef = useRef<AnimatedIconHandle>(null);
 
   if (!exception) return null;
 
@@ -87,11 +92,14 @@ export function ExceptionDrawer({
       <Sheet open={!!exception} onOpenChange={(open) => !open && onClose()}>
         <SheetContent
           side="right"
-          className="w-full gap-0 overflow-y-auto border-slate-200 sm:max-w-md"
+          className="w-full gap-0 overflow-y-auto rounded-l-xl border-slate-200 sm:max-w-md"
         >
           <SheetHeader className="border-b border-slate-200">
             <div className="flex items-center gap-2">
               <PriorityBadge priority={exception.priority} />
+              <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                {exception.type.replace(/-/g, " ")}
+              </span>
               <span className="text-xs tabular-nums text-slate-500">
                 {exception.id}
               </span>
@@ -110,7 +118,7 @@ export function ExceptionDrawer({
                 <dt className="text-xs text-slate-500">SLA remaining</dt>
                 <dd
                   className={cn(
-                    "mt-0.5 font-medium tabular-nums",
+                    "mt-0.5 text-lg font-semibold tabular-nums",
                     sla.urgent ? "text-red-600" : "text-slate-900",
                   )}
                 >
@@ -123,7 +131,7 @@ export function ExceptionDrawer({
               </div>
               <div>
                 <dt className="text-xs text-slate-500">Revenue at risk</dt>
-                <dd className="mt-0.5 font-medium tabular-nums text-slate-900">
+                <dd className="mt-0.5 text-lg font-semibold tabular-nums text-slate-900">
                   ${exception.revenueAtRisk.toLocaleString()}
                 </dd>
               </div>
@@ -152,7 +160,7 @@ export function ExceptionDrawer({
             )}
 
             {exception.status === "awaiting-decision" && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
                 Waiting on Regional Operations — the escalation is in the
                 manager&apos;s decision queue.
               </div>
@@ -161,7 +169,7 @@ export function ExceptionDrawer({
             {decision && (
               <div
                 className={cn(
-                  "rounded-lg border p-4 text-sm",
+                  "rounded-xl border p-4 text-sm",
                   decision.outcome === "approved"
                     ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                     : "border-red-200 bg-red-50 text-red-600",
@@ -201,7 +209,11 @@ export function ExceptionDrawer({
                     </SelectTrigger>
                     <SelectContent>
                       {technicians.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>
+                        <SelectItem
+                          key={t.id}
+                          value={t.id}
+                          className="tabular-nums"
+                        >
                           {t.name} — {getBranchById(t.branch)?.name ?? t.branch}
                           {" · "}
                           {techStatusLabels[t.status]}
@@ -216,8 +228,16 @@ export function ExceptionDrawer({
                 <div className="flex gap-2">
                   <Button
                     onClick={() => setEscalateOpen(true)}
+                    onMouseEnter={() => escalateIconRef.current?.startAnimation()}
+                    onMouseLeave={() => escalateIconRef.current?.stopAnimation()}
+                    onPointerDown={() => escalateIconRef.current?.startAnimation()}
                     className="bg-slate-900 text-white hover:bg-slate-800"
                   >
+                    <ArrowNarrowUpIcon
+                      ref={escalateIconRef}
+                      size={16}
+                      strokeWidth={2}
+                    />
                     Escalate
                   </Button>
                   <Button
@@ -305,8 +325,12 @@ export function ExceptionDrawer({
             <Button
               onClick={submitEscalation}
               disabled={!reason.trim() || !approval}
+              onMouseEnter={() => sendIconRef.current?.startAnimation()}
+              onMouseLeave={() => sendIconRef.current?.stopAnimation()}
+              onPointerDown={() => sendIconRef.current?.startAnimation()}
               className="bg-slate-900 text-white hover:bg-slate-800"
             >
+              <SendIcon ref={sendIconRef} size={16} strokeWidth={2} />
               Send escalation
             </Button>
           </DialogFooter>
