@@ -22,6 +22,7 @@ import { ExceptionDrawer } from "@/components/exception-drawer";
 import { PriorityBadge } from "@/components/priority-badge";
 import { getBranchById } from "@/lib/data";
 import { useRelay } from "@/lib/store";
+import { slaInfo, useMinutesElapsed } from "@/lib/use-sla";
 import { cn } from "@/lib/utils";
 import type { ApprovalType, Exception } from "@/lib/types";
 
@@ -178,6 +179,7 @@ function DecisionRow({
   onDecide: (mode: "approved" | "denied") => void;
 }) {
   const branch = getBranchById(exception.branch);
+  const sla = slaInfo(exception, useMinutesElapsed());
   const escalation = exception.escalation;
   if (!escalation) return null;
 
@@ -208,12 +210,10 @@ function DecisionRow({
             <span
               className={cn(
                 "font-medium tabular-nums",
-                exception.slaMinutesRemaining < 60
-                  ? "text-red-600"
-                  : "text-slate-900",
+                sla.urgent ? "text-red-600" : "text-slate-900",
               )}
             >
-              SLA {exception.slaMinutesRemaining} min
+              {sla.breached ? "SLA breached" : `SLA ${sla.minutes} min`}
             </span>
             <span aria-hidden>·</span>
             <span>{branch?.name ?? exception.branch}</span>

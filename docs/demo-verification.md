@@ -83,6 +83,15 @@ shows East at 2 open (live count) rather than the stale seeded 5.
    events — synthetic `dispatchEvent` clicks won't open them. Irrelevant to
    real users.
 
+## Addendum: live SLA countdown
+
+The spec's "SLA countdown" now actually counts down (`src/lib/use-sla.ts`):
+displayed minutes derive from page-load elapsed time, ticking once per minute
+across cards, drawer, and decision rows — store state never mutates. At zero
+the readout clamps to **"SLA breached"** in red. Verified live: 81 s after
+load, readings moved 42→41, 60→59, 95→94, and the 59-minute row crossed the
+under-60 threshold and turned red.
+
 ## What's deliberately untested
 
 Resolve-from-drawer round trip (exercised ad hoc, not scripted), deny→deny-note

@@ -5,14 +5,10 @@
 // red under 60 min) · branch · revenue at risk. Entire card clickable.
 
 import { getBranchById } from "@/lib/data";
+import { slaInfo, useMinutesElapsed } from "@/lib/use-sla";
 import { cn } from "@/lib/utils";
 import { PriorityBadge } from "@/components/priority-badge";
 import type { Exception } from "@/lib/types";
-
-function slaLabel(e: Exception): string {
-  if (e.status === "resolved") return "SLA met";
-  return `SLA ${e.slaMinutesRemaining} min`;
-}
 
 export function ExceptionCard({
   exception,
@@ -23,6 +19,7 @@ export function ExceptionCard({
 }) {
   const branch = getBranchById(exception.branch);
   const decision = exception.escalation?.decision;
+  const sla = slaInfo(exception, useMinutesElapsed());
 
   return (
     <button
@@ -58,13 +55,14 @@ export function ExceptionCard({
         <span
           className={cn(
             "font-medium tabular-nums",
-            exception.status !== "resolved" &&
-              exception.slaMinutesRemaining < 60
-              ? "text-red-600"
-              : "text-slate-900",
+            sla.urgent ? "text-red-600" : "text-slate-900",
           )}
         >
-          {slaLabel(exception)}
+          {sla.met
+            ? "SLA met"
+            : sla.breached
+              ? "SLA breached"
+              : `SLA ${sla.minutes} min`}
         </span>
         <span aria-hidden>·</span>
         <span>{branch?.name ?? exception.branch}</span>

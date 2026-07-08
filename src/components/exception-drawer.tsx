@@ -35,6 +35,7 @@ import { AuditTimeline } from "@/components/audit-timeline";
 import { PriorityBadge } from "@/components/priority-badge";
 import { getBranchById, getTechnicianById, technicians } from "@/lib/data";
 import { useRelay } from "@/lib/store";
+import { slaInfo, useMinutesElapsed } from "@/lib/use-sla";
 import { cn } from "@/lib/utils";
 import type { ApprovalType, Exception } from "@/lib/types";
 
@@ -61,9 +62,11 @@ export function ExceptionDrawer({
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [approval, setApproval] = useState<ApprovalType | "">("");
+  const minutesElapsed = useMinutesElapsed();
 
   if (!exception) return null;
 
+  const sla = slaInfo(exception, minutesElapsed);
   const branch = getBranchById(exception.branch);
   const assigned = getTechnicianById(exception.assignedTech);
   const decision = exception.escalation?.decision;
@@ -108,15 +111,14 @@ export function ExceptionDrawer({
                 <dd
                   className={cn(
                     "mt-0.5 font-medium tabular-nums",
-                    exception.status !== "resolved" &&
-                      exception.slaMinutesRemaining < 60
-                      ? "text-red-600"
-                      : "text-slate-900",
+                    sla.urgent ? "text-red-600" : "text-slate-900",
                   )}
                 >
-                  {exception.status === "resolved"
+                  {sla.met
                     ? "Met"
-                    : `${exception.slaMinutesRemaining} min`}
+                    : sla.breached
+                      ? "Breached"
+                      : `${sla.minutes} min`}
                 </dd>
               </div>
               <div>
