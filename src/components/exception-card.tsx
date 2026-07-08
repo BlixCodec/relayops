@@ -25,7 +25,7 @@ export function ExceptionCard({
     <button
       type="button"
       onClick={() => onOpen(exception.id)}
-      className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-indigo-600"
+      className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white p-4 text-left transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-indigo-600"
     >
       <div className="flex items-center gap-2">
         <PriorityBadge priority={exception.priority} />
@@ -33,7 +33,7 @@ export function ExceptionCard({
           {exception.customer}
         </span>
         {exception.status === "awaiting-decision" && (
-          <span className="ml-auto rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-600">
+          <span className="ml-auto rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
             Waiting on manager
           </span>
         )}
@@ -42,8 +42,8 @@ export function ExceptionCard({
             className={cn(
               "ml-auto rounded-full px-2 py-0.5 text-xs font-medium",
               decision.outcome === "approved"
-                ? "bg-emerald-50 text-emerald-600"
-                : "bg-red-50 text-red-600",
+                ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+                : "border border-red-200 bg-red-50 text-red-600",
             )}
           >
             {decision.outcome === "approved" ? "Approved" : "Denied"} — see note
@@ -67,7 +67,7 @@ export function ExceptionCard({
         <span aria-hidden>·</span>
         <span>{branch?.name ?? exception.branch}</span>
         <span aria-hidden>·</span>
-        <span className="tabular-nums">
+        <span className="font-medium tabular-nums">
           ${exception.revenueAtRisk.toLocaleString()} at risk
         </span>
       </div>
