@@ -140,7 +140,7 @@ function DispatcherToday() {
               detail={`${escalated.length} escalation${escalated.length === 1 ? "" : "s"} waiting on Regional Operations.`}
             />
           </div>
-          <div className="shrink-0 lg:ml-auto">
+          <div className="hidden shrink-0 sm:block lg:ml-auto">
             <QueuePulse
               overdue={queueBuckets.overdue}
               under60={queueBuckets.under60}

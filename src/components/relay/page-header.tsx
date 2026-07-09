@@ -5,11 +5,13 @@ export function PageHeader({
   guidance,
   actions,
   className,
+  actionsClassName,
 }: {
   title: string;
   guidance: string;
   actions?: React.ReactNode;
   className?: string;
+  actionsClassName?: string;
 }) {
   return (
     <div
@@ -25,7 +27,11 @@ export function PageHeader({
         <p className="mt-1 text-[12px] text-slate-500 sm:text-[13px]">{guidance}</p>
       </div>
       {actions ? (
-        <div className="flex items-center justify-center gap-2 sm:justify-end">{actions}</div>
+        <div
+          className={cn("flex items-center justify-center gap-2 sm:justify-end", actionsClassName)}
+        >
+          {actions}
+        </div>
       ) : null}
     </div>
   );

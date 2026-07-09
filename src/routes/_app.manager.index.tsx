@@ -42,6 +42,7 @@ function DecisionQueue() {
         title={headline}
         guidance="Approve or deny escalations to unblock branches."
         className="bg-slate-50/85 backdrop-blur-md"
+        actionsClassName="hidden sm:flex"
         actions={
           <DecisionPulse
             pending={pending.length}

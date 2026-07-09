@@ -86,7 +86,7 @@ function ManagerToday() {
             <SummaryChip value={criticalBranch} label="Critical branch" tone="critical" />
             <SummaryChip value={decisionsToday} label="Today" />
           </div>
-          <div className="shrink-0 lg:ml-auto">
+          <div className="hidden shrink-0 sm:block lg:ml-auto">
             <ManagerPulse
               pending={escalated.length}
               critical={criticalPending}

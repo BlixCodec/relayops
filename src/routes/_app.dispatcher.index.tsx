@@ -70,6 +70,7 @@ function DispatcherWorkbench() {
         title={headline}
         guidance="Start with the highest-risk exception."
         className="bg-indigo-50/30"
+        actionsClassName="hidden sm:flex"
         actions={
           <QueuePulse overdue={overdueCount} under60={under60Count} active={active.length} />
         }
@@ -114,7 +115,9 @@ function DispatcherWorkbench() {
                       </h2>
                       <span className="tnum text-[11px] text-slate-400">{g.items.length}</span>
                     </div>
-                    {g.key === "overdue" ? <SlaLegend className="-my-1" /> : null}
+                    {g.key === "overdue" ? (
+                      <SlaLegend className="-my-1 hidden sm:inline-flex" />
+                    ) : null}
                   </div>
                   <div className="space-y-3">
                     {g.items.map((e) => (
