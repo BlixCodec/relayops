@@ -27,6 +27,7 @@ export function ExceptionCard({
   const storedCollapsed = useRelayStore((s) => s.collapsedCards[exception.id]);
   const setCardCollapsed = useRelayStore((s) => s.setCardCollapsed);
   const collapsed = storedCollapsed ?? !defaultExpanded;
+  const featured = defaultExpanded && !collapsed;
 
   const branch = branchById(exception.branchId);
   const tech = techById(exception.assignedTech);
@@ -35,7 +36,8 @@ export function ExceptionCard({
   return (
     <div
       className={cn(
-        "group relative flex w-full flex-col rounded-xl border border-slate-200/60 bg-white px-3.5 py-3 shadow-card transition-shadow sm:px-4 sm:py-3.5",
+        "group relative flex w-full flex-col rounded-xl border border-slate-200/60 bg-white shadow-card transition-shadow",
+        featured ? "px-4 py-4 sm:px-5 sm:py-5" : "px-3.5 py-3 sm:px-4 sm:py-3.5",
         "hover:shadow-panel",
       )}
     >
@@ -47,14 +49,19 @@ export function ExceptionCard({
       />
 
       <div className="relative flex min-w-0 items-start gap-3">
-        <FacilityPhoto name={exception.customer} size={40} />
+        <FacilityPhoto name={exception.customer} size={featured ? 46 : 40} />
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 items-center gap-2">
             <PriorityBadge priority={exception.priority} />
             <span className="tnum hidden text-[11px] text-slate-400 sm:inline">{exception.id}</span>
           </div>
           <div className="mt-1.5 flex min-w-0 items-center gap-2">
-            <div className="min-w-0 flex-1 truncate text-[13.5px] font-semibold text-slate-900 sm:text-sm">
+            <div
+              className={cn(
+                "min-w-0 flex-1 truncate font-semibold text-slate-900",
+                featured ? "text-[15px] sm:text-[15.5px]" : "text-[13.5px] sm:text-sm",
+              )}
+            >
               {exception.customer}
             </div>
             {tech ? (
@@ -102,15 +109,27 @@ export function ExceptionCard({
 
       {!collapsed ? (
         <>
-          <div className="relative mt-2 line-clamp-1 text-xs text-slate-500">{exception.issue}</div>
+          <div
+            className={cn(
+              "relative line-clamp-1 text-slate-500",
+              featured ? "mt-2.5 text-[12.5px]" : "mt-2 text-xs",
+            )}
+          >
+            {exception.issue}
+          </div>
 
           {exception.status !== "resolved" && exception.recommendation.bullets.length > 0 ? (
-            <div className="pointer-events-none relative mt-2.5">
+            <div className={cn("pointer-events-none relative", featured ? "mt-3" : "mt-2.5")}>
               <RecommendationTree exception={exception} />
             </div>
           ) : null}
 
-          <div className="relative mt-3 flex flex-col gap-2 border-t border-slate-100 pt-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <div
+            className={cn(
+              "relative flex flex-col gap-2 border-t border-slate-100 sm:flex-row sm:items-center sm:justify-between",
+              featured ? "mt-4 pt-3" : "mt-3 pt-2.5",
+            )}
+          >
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
               <SlaCountdown dueAt={exception.slaDueAt} compact />
               <span className="inline-flex items-center gap-1.5">
@@ -133,9 +152,9 @@ export function ExceptionCard({
                 openDrawer(exception.id);
               }}
               className="relative z-10 inline-flex h-7 w-fit items-center gap-1.5 self-end rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-              aria-label={`Open ${exception.customer} side panel`}
+              aria-label={`Open ${exception.customer} details`}
             >
-              Open panel
+              Open details
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -150,9 +169,9 @@ export function ExceptionCard({
               openDrawer(exception.id);
             }}
             className="relative z-10 inline-flex h-7 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-            aria-label={`Open ${exception.customer} side panel`}
+            aria-label={`Open ${exception.customer} details`}
           >
-            Open panel
+            Open details
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>

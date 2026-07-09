@@ -43,12 +43,12 @@ function Decisions() {
     <>
       <PageHeader
         title="Decisions"
-        guidance="Every approval and denial, decision-maker on record."
+        guidance="Every approval and denial, with the decision-maker on record."
         className="bg-slate-50/85 backdrop-blur-md"
       />
-      <div className="p-6">
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-          <table className="w-full text-sm">
+      <div className="p-4 sm:p-6">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+          <table className="w-full min-w-[1040px] text-sm">
             <thead className="border-b border-slate-200 bg-slate-50/60 text-[11px] uppercase tracking-wider text-slate-500">
               <tr>
                 <Th>Decision</Th>
@@ -93,7 +93,7 @@ function Decisions() {
                     </Td>
                     <Td className="text-slate-700">
                       <span className="inline-flex min-w-[150px] items-center gap-2">
-                        <AvatarInitials name={e.decision?.by ?? "Manager"} size={24} />
+                        <AvatarInitials name={e.decision?.by ?? "Regional Operations"} size={24} />
                         <span>{e.decision?.by}</span>
                       </span>
                     </Td>
@@ -129,8 +129,8 @@ function Decisions() {
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-2 text-left font-medium">{children}</th>;
+  return <th className="px-4 py-3 text-left font-medium">{children}</th>;
 }
 function Td({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-4 py-2.5 align-middle ${className ?? ""}`}>{children}</td>;
+  return <td className={`px-4 py-3 align-middle ${className ?? ""}`}>{children}</td>;
 }

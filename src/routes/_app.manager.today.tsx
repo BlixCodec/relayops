@@ -354,8 +354,10 @@ function PrimaryDecision({
             <PriorityBadge priority={ex.priority} />
             <span className="tnum text-[11px] text-slate-400">{ex.id}</span>
           </div>
-          <h2 className="mt-2 truncate text-[17px] font-semibold text-slate-900">{ex.customer}</h2>
-          <p className="mt-1 text-[13px] text-slate-600">{ex.issueType}</p>
+          <h2 className="mt-2 truncate text-[18px] font-semibold leading-tight text-slate-900">
+            {ex.customer}
+          </h2>
+          <p className="mt-1.5 text-[13px] leading-5 text-slate-600">{ex.issueType}</p>
         </div>
         <button
           type="button"
@@ -401,7 +403,7 @@ function PrimaryDecision({
           onClick={onOpen}
           className="inline-flex h-7 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
-          Open panel
+          Open details
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>

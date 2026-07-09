@@ -59,7 +59,7 @@ function AllEscalations() {
         guidance="Full history of escalations across every branch."
         className="bg-slate-50/85 backdrop-blur-md"
       />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex gap-1 rounded-md border border-slate-200 bg-white p-0.5">
             {filters.map((f) => (
@@ -88,8 +88,8 @@ function AllEscalations() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+          <table className="w-full min-w-[1120px] text-sm">
             <thead className="border-b border-slate-200 bg-slate-50/60 text-[11px] uppercase tracking-wider text-slate-500">
               <tr>
                 <Th>Customer</Th>
@@ -177,8 +177,8 @@ function AllEscalations() {
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-2 text-left font-medium">{children}</th>;
+  return <th className="px-4 py-3 text-left font-medium">{children}</th>;
 }
 function Td({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-4 py-2.5 align-middle ${className ?? ""}`}>{children}</td>;
+  return <td className={`px-4 py-3 align-middle ${className ?? ""}`}>{children}</td>;
 }

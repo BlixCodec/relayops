@@ -66,7 +66,7 @@ const highlightMap: Record<
     bg: "bg-amber-50/70",
     border: "border-amber-200/70",
     text: "text-amber-800",
-    label: "Escalated to Regional Ops",
+    label: "Escalated to Regional Operations",
   },
 };
 

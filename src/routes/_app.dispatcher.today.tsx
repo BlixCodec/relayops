@@ -122,21 +122,21 @@ function DispatcherToday() {
               icon={Timer}
               tone="warning"
               value={approachingSla}
-              label="60m"
+              label="Under 60"
               detail={`${queueBuckets.overdue} overdue and ${queueBuckets.under60} due inside 60 minutes.`}
             />
             <StatChip
               icon={ClipboardList}
               tone="neutral"
               value={assignedCount}
-              label="Mine"
+              label="Assigned"
               detail={`${assignedCount} assignment${assignedCount === 1 ? "" : "s"} currently owned by ${currentUser.dispatcher}.`}
             />
             <StatChip
               icon={Inbox}
               tone="neutral"
               value={escalated.length}
-              label="Manager"
+              label="Escalated"
               detail={`${escalated.length} escalation${escalated.length === 1 ? "" : "s"} waiting on Regional Operations.`}
             />
           </div>
@@ -153,7 +153,7 @@ function DispatcherToday() {
 
       {primary ? <PrimaryCard ex={primary} onOpen={() => openDrawer(primary.id)} /> : null}
 
-      <Section title="Waiting on manager" count={escalated.length}>
+      <Section title="Waiting on Regional Operations" count={escalated.length}>
         {escalated.length === 0 ? (
           <EmptyRow message="No escalations awaiting a decision." />
         ) : (
@@ -167,7 +167,7 @@ function DispatcherToday() {
 
       <Section title="Your active assignments" count={mine.length}>
         {mine.length === 0 ? (
-          <EmptyRow message="No assignments currently under your name." />
+          <EmptyRow message="No active assignments under your name." />
         ) : (
           <div className="divide-y divide-slate-100">
             {mine.slice(0, 4).map((e) => (
@@ -237,7 +237,7 @@ function PrimaryCard({ ex, onOpen }: { ex: Exception; onOpen: () => void }) {
   return (
     <div
       className={cn(
-        "rounded-2xl border bg-white p-4 shadow-card sm:p-6",
+        "rounded-2xl border bg-white p-5 shadow-card sm:p-6",
         tone === "breached" || tone === "critical" ? "border-red-200" : "border-slate-200",
       )}
     >
@@ -251,8 +251,10 @@ function PrimaryCard({ ex, onOpen }: { ex: Exception; onOpen: () => void }) {
             <PriorityBadge priority={ex.priority} />
             <span className="tnum text-[11px] text-slate-400">{ex.id}</span>
           </div>
-          <h2 className="mt-2 text-[17px] font-semibold text-slate-900">{ex.customer}</h2>
-          <p className="mt-1 text-[13px] text-slate-600">{ex.issue}</p>
+          <h2 className="mt-2 text-[18px] font-semibold leading-tight text-slate-900">
+            {ex.customer}
+          </h2>
+          <p className="mt-1.5 text-[13px] leading-5 text-slate-600">{ex.issue}</p>
         </div>
       </div>
 
@@ -272,7 +274,7 @@ function PrimaryCard({ ex, onOpen }: { ex: Exception; onOpen: () => void }) {
           onClick={onOpen}
           className="inline-flex h-7 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
-          Open panel
+          Open details
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -439,7 +441,7 @@ function MiniRow({ ex, onOpen }: { ex: Exception; onOpen: () => void }) {
         </span>
       ) : null}
       <span className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
-        <span className="hidden sm:inline">Open panel</span>
+        <span className="hidden sm:inline">Open details</span>
         <ArrowRight className="h-3.5 w-3.5" />
       </span>
     </button>

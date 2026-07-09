@@ -31,7 +31,7 @@ export function DecisionRow({ exception }: { exception: Exception }) {
             onClick={() => openDrawer(exception.id)}
             className="ml-auto text-[11px] font-medium text-indigo-600 hover:text-indigo-700"
           >
-            Review details →
+            Open details →
           </button>
         </div>
 
@@ -46,9 +46,10 @@ export function DecisionRow({ exception }: { exception: Exception }) {
         </div>
 
         {exception.escalation ? (
-          <p className="mt-1 text-xs italic leading-6 text-slate-700">
-            "<PersonMentionText text={exception.escalation.reason} />"
-          </p>
+          <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-[12.5px] leading-5 text-slate-700">
+            <span className="mr-1 font-medium text-slate-900">Dispatcher note:</span>
+            <PersonMentionText text={exception.escalation.reason} />
+          </div>
         ) : null}
 
         <RecommendationTree exception={exception} className="mt-3" />
@@ -68,7 +69,7 @@ export function DecisionRow({ exception }: { exception: Exception }) {
               exception.id,
               "Approved. Proceed with the recommended action and notify dispatch.",
             );
-            toast("Decision approved with instructions. Dispatch has been notified.");
+            toast("Dispatch has approval and instructions.");
           }}
         >
           Approve

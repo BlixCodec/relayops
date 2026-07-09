@@ -77,12 +77,12 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
     addNote(exception.id, note.trim());
     setNote("");
     setExpanded(false);
-    toast("Note added to activity.");
+    toast("Note added to the activity trail.");
   };
 
   const runImprove = () => {
     if (note.trim().length === 0) {
-      toast("Type a draft comment first, then improve it.");
+      toast("Add a draft comment before improving it.");
       return;
     }
     setImproving(true);
@@ -90,7 +90,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
     setTimeout(() => {
       setNote(improveNote(note));
       setImproving(false);
-      toast("Comment rewritten with AI.");
+      toast("Comment rewritten for clarity.");
     }, 550);
   };
 
@@ -114,7 +114,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
                   type="button"
                   onClick={() => {
                     assignTechnician(exception.id, t.id);
-                    toast(`${t.name} assigned to ${exception.customer}.`);
+                    toast(`${t.name} is assigned to ${exception.customer}.`);
                   }}
                   className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-slate-50"
                 >
@@ -169,7 +169,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
                   escalate(exception.id, escalateReason.trim());
                   setEscalateOpen(false);
                   setEscalateReason("");
-                  toast("Escalation sent to Regional Operations.");
+                  toast("Regional Operations has been notified.");
                 }}
               >
                 Send escalation
@@ -186,7 +186,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
             disabled={!canResolve}
             onClick={() => {
               resolve(exception.id);
-              toast(`${exception.customer} resolved.`);
+              toast(`${exception.customer} marked resolved.`);
             }}
           />
         </div>

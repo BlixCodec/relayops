@@ -58,7 +58,7 @@ export function DenyDialog({
               deny(exceptionId, note.trim());
               setOpen(false);
               setNote("");
-              toast("Decision denied. Dispatch has received your instruction.");
+              toast("Dispatch has the denial instruction.");
             }}
           >
             Deny with instruction

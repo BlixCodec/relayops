@@ -31,7 +31,7 @@ function Resolved() {
         title="Resolved exceptions"
         guidance="Review completed work and operational outcomes."
       />
-      <div className="p-3 sm:p-6">
+      <div className="p-4 sm:p-6">
         <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-card">
           <table className="w-full min-w-[980px] table-fixed text-sm">
             <colgroup>

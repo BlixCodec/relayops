@@ -9,7 +9,7 @@ export interface Person {
 
 export const people: Person[] = [
   { name: "Alicia Monroe", role: "Sr. Dispatcher", seed: "alicia-monroe-42" },
-  { name: "Renata Voss", role: "Regional Ops Manager", seed: "renata-voss-17" },
+  { name: "Renata Voss", role: "Regional Operations Manager", seed: "renata-voss-17" },
   { name: "Jordan Fields", role: "Dispatcher", seed: "jordan-fields-88" },
   { name: "Marcus Reyes", role: "Refrigeration Tech", seed: "marcus-reyes-31" },
   { name: "Dana Whitfield", role: "Refrigeration Tech", seed: "dana-whitfield-55" },

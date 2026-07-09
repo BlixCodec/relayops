@@ -82,20 +82,20 @@ export function RecommendationTree({
   return (
     <section
       className={cn(
-        "rounded-xl border border-violet-100 bg-violet-50/30 px-4 py-3.5 sm:px-5",
+        "rounded-xl border border-violet-100 bg-violet-50/35 px-4 py-3.5 shadow-[0_1px_2px_rgba(79,70,229,0.04)] sm:px-5",
         className,
       )}
     >
       {/* Header */}
       <div className="flex items-center gap-1.5 text-[11px] font-medium text-violet-600">
         <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
-        Recommended next action
+        Recommended action
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-2">
-        <span className="text-[14px] font-semibold tracking-tight text-slate-900">
+        <span className="text-[14px] font-semibold leading-snug tracking-tight text-slate-900">
           <PersonMentionText text={tree.action} />
         </span>
-        <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-medium text-violet-700">
+        <span className="rounded-full border border-violet-200/70 bg-white px-2 py-0.5 text-[10px] font-medium text-violet-700">
           AI suggestion
         </span>
       </div>

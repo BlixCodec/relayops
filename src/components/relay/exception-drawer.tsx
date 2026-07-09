@@ -103,7 +103,7 @@ export function ExceptionDrawer() {
                 <div className="rounded-xl bg-white px-4 py-3 shadow-card ring-1 ring-slate-200/60">
                   <p className="text-[13px] leading-relaxed text-slate-800">{exception.issue}</p>
                   {exception.escalation && !exception.decision ? (
-                    <div className="mt-2.5 rounded-md border-l-2 border-amber-400 bg-amber-50/60 px-3 py-2 text-xs text-slate-700">
+                    <div className="mt-2.5 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs text-slate-700">
                       <span className="font-medium text-amber-800">Escalation ask ·</span>{" "}
                       <PersonMentionText text={exception.escalation.reason} />
                     </div>
@@ -111,10 +111,10 @@ export function ExceptionDrawer() {
                   {exception.decision ? (
                     <div
                       className={cn(
-                        "mt-2.5 rounded-md border-l-2 px-3 py-2 text-xs text-slate-700",
+                        "mt-2.5 rounded-lg border px-3 py-2 text-xs text-slate-700",
                         exception.decision.outcome === "approved"
-                          ? "border-emerald-400 bg-emerald-50/60"
-                          : "border-red-400 bg-red-50/60",
+                          ? "border-emerald-200 bg-emerald-50/60"
+                          : "border-red-200 bg-red-50/60",
                       )}
                     >
                       <span

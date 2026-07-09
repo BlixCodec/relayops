@@ -49,7 +49,7 @@ function MyAssignments() {
     <>
       <PageHeader
         title="Assignments"
-        guidance="Track work already assigned to your team."
+        guidance="Track active assignments across the team."
         actions={
           <Tabs value={tab} onValueChange={(v) => setTab(v as "mine" | "team")}>
             <TabsList className="h-8">
@@ -64,7 +64,7 @@ function MyAssignments() {
         }
       />
 
-      <div className="p-3 sm:p-6">
+      <div className="p-4 sm:p-6">
         <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-card">
           <table className="w-full min-w-[960px] table-fixed text-sm">
             <colgroup>

@@ -20,10 +20,10 @@ const routeMap: Record<string, Crumb[]> = {
   "/dispatcher": [{ label: "Dispatcher" }, { label: "Workbench" }],
   "/dispatcher/assignments": [{ label: "Dispatcher" }, { label: "Assignments" }],
   "/dispatcher/resolved": [{ label: "Dispatcher" }, { label: "Resolved" }],
-  "/manager/today": [{ label: "Regional Ops" }, { label: "Today" }],
-  "/manager": [{ label: "Regional Ops" }, { label: "Decision Queue" }],
-  "/manager/escalations": [{ label: "Regional Ops" }, { label: "Escalations" }],
-  "/manager/decisions": [{ label: "Regional Ops" }, { label: "Decisions" }],
+  "/manager/today": [{ label: "Regional Operations" }, { label: "Today" }],
+  "/manager": [{ label: "Regional Operations" }, { label: "Decision Queue" }],
+  "/manager/escalations": [{ label: "Regional Operations" }, { label: "Escalations" }],
+  "/manager/decisions": [{ label: "Regional Operations" }, { label: "Decisions" }],
 };
 
 export function TopBar() {
@@ -34,7 +34,7 @@ export function TopBar() {
   const [switchOpen, setSwitchOpen] = useState(false);
   const effectiveRole = path.startsWith("/manager") ? "manager" : role;
   const user = effectiveRole === "dispatcher" ? currentUser.dispatcher : currentUser.manager;
-  const roleLabel = effectiveRole === "dispatcher" ? "Dispatcher" : "Regional Ops";
+  const roleLabel = effectiveRole === "dispatcher" ? "Dispatcher" : "Regional Operations";
   const unread = notifications.filter((n) => !n.read);
   const urgentUnread = unread.some((n) => n.kind === "escalation" || n.kind === "sla");
   const dotClass = urgentUnread ? "bg-violet-600" : "bg-emerald-500";

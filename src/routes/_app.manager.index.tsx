@@ -31,16 +31,16 @@ function DecisionQueue() {
 
   const headline =
     pending.length === 0
-      ? "No decisions are blocking dispatch operations."
+      ? "No decisions are blocking dispatch."
       : `${pending.length} decision${pending.length === 1 ? "" : "s"} ${
           pending.length === 1 ? "is" : "are"
-        } currently blocking dispatch operations.`;
+        } blocking dispatch.`;
 
   return (
     <>
       <PageHeader
         title={headline}
-        guidance="Review pending escalations to unblock branch operations."
+        guidance="Approve or deny escalations to unblock branches."
         className="bg-slate-50/85 backdrop-blur-md"
         actions={
           <DecisionPulse
@@ -69,7 +69,7 @@ function DecisionQueue() {
         </div>
       ) : null}
 
-      <div className="space-y-5 p-6">
+      <div className="space-y-5 p-4 sm:p-6">
         <BranchHealthStrip />
 
         {pending.length === 0 ? (

@@ -68,7 +68,7 @@ function DispatcherWorkbench() {
     <>
       <PageHeader
         title={headline}
-        guidance="Review the highest-priority exception first to reduce SLA risk."
+        guidance="Start with the highest-risk exception."
         className="bg-indigo-50/30"
         actions={
           <QueuePulse overdue={overdueCount} under60={under60Count} active={active.length} />

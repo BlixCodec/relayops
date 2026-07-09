@@ -35,7 +35,7 @@ export function RoleSwitchDialog({
     {
       role: "manager",
       name: currentUser.manager,
-      title: "Regional Ops Manager",
+      title: "Regional Operations Manager",
       blurb: "Review escalations, authorize cross-branch moves, and clear the decision queue.",
     },
   ];
@@ -84,7 +84,7 @@ export function RoleSwitchDialog({
                           : "bg-violet-100 text-violet-700",
                       )}
                     >
-                      {o.role === "dispatcher" ? "Dispatcher" : "Ops Manager"}
+                      {o.role === "dispatcher" ? "Dispatcher" : "Regional Operations"}
                     </span>
                   </div>
                   <div className="mt-0.5 text-[11px] text-slate-500">{o.title}</div>
@@ -102,7 +102,7 @@ export function RoleSwitchDialog({
             Cancel
           </Button>
           <Button onClick={confirm}>
-            Continue as {pending === "dispatcher" ? "Dispatcher" : "Ops Manager"}
+            Continue as {pending === "dispatcher" ? "Dispatcher" : "Regional Operations"}
           </Button>
         </DialogFooter>
       </DialogContent>

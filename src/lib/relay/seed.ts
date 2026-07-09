@@ -516,7 +516,7 @@ export const initialNotifications: Notification[] = [
     at: hrsAgo(0.25),
     read: false,
     exceptionId: "EX-2046",
-    actionLabel: "Open panel",
+    actionLabel: "Open details",
   },
   {
     id: "n3",
@@ -560,7 +560,7 @@ export const initialNotifications: Notification[] = [
     at: hrsAgo(0.15),
     read: false,
     exceptionId: "EX-2041",
-    actionLabel: "Open panel",
+    actionLabel: "Open details",
   },
   {
     id: "n8",
