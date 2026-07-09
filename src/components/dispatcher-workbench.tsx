@@ -26,10 +26,10 @@ export function DispatcherWorkbench() {
   return (
     <main className="mx-auto w-full max-w-5xl p-6">
       <div>
-        <h1 className="text-lg font-semibold tracking-tight text-slate-900">
+        <h1 className="text-[19px] leading-tight font-semibold tracking-tight text-slate-900">
           Today&apos;s exceptions
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-[13px] text-slate-500">
           <span className="font-medium tabular-nums text-slate-900">
             {active.length}
           </span>{" "}

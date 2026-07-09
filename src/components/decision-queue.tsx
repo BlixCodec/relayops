@@ -20,8 +20,10 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { AvatarInitials } from "@/components/avatar-initials";
 import { BranchHealthStrip } from "@/components/branch-health-strip";
 import { ExceptionDrawer } from "@/components/exception-drawer";
+import { LocationBadge } from "@/components/location-badge";
 import { PriorityBadge } from "@/components/priority-badge";
 import { SlaCountdown } from "@/components/sla-countdown";
 import { getBranchById } from "@/lib/data";
@@ -66,10 +68,10 @@ export function DecisionQueue() {
 
   return (
     <main className="mx-auto w-full max-w-5xl p-6">
-      <h1 className="text-lg font-semibold tracking-tight text-slate-900">
+      <h1 className="text-[19px] leading-tight font-semibold tracking-tight text-slate-900">
         Decision queue
       </h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-[13px] text-slate-500">
         <span className="font-medium tabular-nums text-slate-900">
           {waiting.length}
         </span>{" "}
@@ -145,7 +147,7 @@ export function DecisionQueue() {
             <DialogDescription className="text-sm text-slate-500">
               {pending?.mode === "approved"
                 ? "Your note travels back to the dispatcher with the approval."
-                : "Denials need instructions — tell the branch what to do instead."}
+                : "Dispatch needs a specific instruction. A note is required."}
             </DialogDescription>
           </DialogHeader>
           <div>
@@ -187,7 +189,7 @@ export function DecisionQueue() {
             >
               {pending?.mode === "approved"
                 ? "Approve escalation"
-                : "Deny with instructions"}
+                : "Deny with instruction"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -212,88 +214,69 @@ function DecisionRow({
   if (!escalation) return null;
 
   return (
-    <li className="rounded-xl border border-slate-200/60 bg-white px-4 py-3 shadow-card transition-shadow hover:shadow-panel">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={onDetails}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onDetails();
-            }
-          }}
-          className="-m-2 min-w-0 flex-1 cursor-pointer rounded-lg p-2 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-indigo-600"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <PriorityBadge priority={exception.priority} />
-            <span className="text-sm leading-tight font-semibold tracking-tight text-slate-900">
-              {exception.customer}
-            </span>
-            <span className="text-xs tabular-nums text-slate-500">
-              {exception.id}
-            </span>
-          </div>
-          <p className="mt-1 text-sm leading-snug text-slate-500">
-            {exception.issue}
-          </p>
-
-          <blockquote className="mt-2 rounded-md border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
-            <p className="text-[11px] font-medium tracking-wide text-slate-500 uppercase">
-              Escalation reason
-            </p>
-            <p className="mt-0.5 text-sm text-slate-700">
-              &ldquo;{escalation.reason}&rdquo;
-            </p>
-            <footer className="mt-1 text-xs text-slate-500">
-              {escalation.escalatedBy} · {escalation.escalatedAt} ·{" "}
-              {approvalLabels[escalation.requestedApproval]}
-            </footer>
-          </blockquote>
-
-          <p className="mt-2 flex items-center gap-3 text-[11px] text-slate-500">
-            <SlaCountdown exception={exception} />
-            <span>{branch?.name ?? exception.branch}</span>
-            <span className="tnum font-medium">
-              ${exception.revenueAtRisk.toLocaleString()} at risk
-            </span>
-          </p>
-        </div>
-
-        <div className="flex shrink-0 flex-row gap-2 sm:flex-col">
-          <Button
-            size="sm"
-            onClick={() => onDecide("approved")}
-            onMouseEnter={() => approveIconRef.current?.startAnimation()}
-            onMouseLeave={() => approveIconRef.current?.stopAnimation()}
-            onPointerDown={() => approveIconRef.current?.startAnimation()}
-            className="bg-slate-900 text-white hover:bg-slate-800"
-          >
-            <CheckedIcon ref={approveIconRef} size={16} strokeWidth={2} />
-            Approve
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onDecide("denied")}
-            onMouseEnter={() => denyIconRef.current?.startAnimation()}
-            onMouseLeave={() => denyIconRef.current?.stopAnimation()}
-            onPointerDown={() => denyIconRef.current?.startAnimation()}
-            className="text-slate-900 hover:bg-slate-50"
-          >
-            <DenyIcon ref={denyIconRef} size={16} strokeWidth={2} />
-            Deny
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
+    <li className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200/60 bg-white p-4 shadow-card md:grid-cols-[1fr_auto]">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <PriorityBadge priority={exception.priority} />
+          <span className="tnum text-[11px] text-slate-400">
+            {exception.id}
+          </span>
+          <span className="ml-1 inline-flex items-center gap-1.5 text-[11px] text-slate-500">
+            <AvatarInitials name={escalation.escalatedBy} size={16} />
+            {escalation.escalatedBy}
+          </span>
+          <button
+            type="button"
             onClick={onDetails}
-            className="text-indigo-600 hover:bg-slate-50 hover:text-indigo-700"
+            className="ml-auto cursor-pointer text-[11px] font-medium text-indigo-600 hover:text-indigo-700"
           >
-            Details
-          </Button>
+            Review details →
+          </button>
         </div>
+
+        <h3 className="mt-1.5 flex items-center gap-2 text-sm font-semibold tracking-tight text-slate-900">
+          <LocationBadge name={exception.customer} size={20} />
+          <span className="truncate">{exception.customer}</span>
+        </h3>
+
+        <p className="mt-1 text-xs text-slate-700 italic">
+          &ldquo;{escalation.reason}&rdquo;
+        </p>
+
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500">
+          <SlaCountdown exception={exception} />
+          <span>{branch?.name ?? exception.branch}</span>
+          <span className="tnum">
+            ${exception.revenueAtRisk.toLocaleString()} at risk
+          </span>
+          <span className="ml-auto">
+            {approvalLabels[escalation.requestedApproval]}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-end justify-end gap-2 md:flex-col md:items-stretch md:justify-between">
+        <Button
+          onClick={() => onDecide("approved")}
+          onMouseEnter={() => approveIconRef.current?.startAnimation()}
+          onMouseLeave={() => approveIconRef.current?.stopAnimation()}
+          onPointerDown={() => approveIconRef.current?.startAnimation()}
+          className="min-w-[110px] bg-slate-900 text-white hover:bg-slate-800"
+        >
+          <CheckedIcon ref={approveIconRef} size={16} strokeWidth={2} />
+          Approve
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => onDecide("denied")}
+          onMouseEnter={() => denyIconRef.current?.startAnimation()}
+          onMouseLeave={() => denyIconRef.current?.stopAnimation()}
+          onPointerDown={() => denyIconRef.current?.startAnimation()}
+          className="min-w-[110px] text-slate-600 hover:text-slate-900"
+        >
+          <DenyIcon ref={denyIconRef} size={16} strokeWidth={2} />
+          Deny
+        </Button>
       </div>
     </li>
   );
