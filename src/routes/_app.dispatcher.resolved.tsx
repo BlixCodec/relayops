@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/relay/page-header";
 import { PriorityBadge } from "@/components/relay/priority-badge";
 import { StatusPill } from "@/components/relay/status-pill";
@@ -58,7 +57,9 @@ function Resolved() {
               {rows.map((e) => {
                 const branch = branchById(e.branchId);
                 const tech = techById(e.assignedTech);
-                const lastAudit = e.audit[e.audit.length - 1];
+                const resolvedAudit =
+                  [...e.audit].reverse().find((a) => a.action.toLowerCase().includes("resolved")) ??
+                  e.audit[e.audit.length - 1];
                 return (
                   <tr
                     key={e.id}
@@ -93,7 +94,9 @@ function Resolved() {
                       <PriorityBadge priority={e.priority} />
                     </Td>
                     <Td className="tnum text-[13px] leading-snug text-slate-600">
-                      <ClientDate iso={lastAudit?.at ?? e.createdAt} />
+                      <span suppressHydrationWarning>
+                        {formatDate(resolvedAudit?.at ?? e.createdAt)}
+                      </span>
                     </Td>
                     <Td className="text-[13px] text-slate-700">
                       <span className="inline-flex items-center gap-2">
@@ -127,10 +130,4 @@ function Th({ children }: { children: React.ReactNode }) {
 }
 function Td({ children, className }: { children: React.ReactNode; className?: string }) {
   return <td className={`px-4 py-4 align-middle ${className ?? ""}`}>{children}</td>;
-}
-
-function ClientDate({ iso }: { iso: string }) {
-  const [text, setText] = useState("");
-  useEffect(() => setText(formatDate(iso)), [iso]);
-  return <span suppressHydrationWarning>{text || "\u00A0"}</span>;
 }

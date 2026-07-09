@@ -95,22 +95,19 @@ export const useRelayStore = create<RelayState>()(
         set((s) => {
           const ex = s.exceptions.find((e) => e.id === id);
           const branchName = branches.find((b) => b.id === ex?.branchId)?.name ?? "Branch";
-          const customer = ex?.customer ?? "the escalation";
-          const message = note
-            ? `Regional Operations approved ${customer} for ${branchName}. ${note}`
-            : `Regional Operations approved ${customer} for ${branchName}. Dispatch can proceed.`;
+          const at = iso();
           return {
             exceptions: s.exceptions.map((e) =>
               e.id === id
                 ? {
                     ...e,
                     status: "escalated",
-                    escalation: { reason, by: user, at: iso() },
+                    escalation: { reason, by: user, at },
                     audit: [
                       ...e.audit,
                       {
                         id: uid(),
-                        at: iso(),
+                        at,
                         actor: user,
                         actorRole: "dispatcher",
                         action: "Escalated to Regional Operations",
@@ -125,7 +122,7 @@ export const useRelayStore = create<RelayState>()(
                 id: uid(),
                 kind: "escalation",
                 message: `${branchName} escalated ${ex?.customer ?? "an exception"} to Regional Operations.`,
-                at: iso(),
+                at,
                 read: false,
                 exceptionId: id,
                 actionLabel: "View escalation",
@@ -141,18 +138,23 @@ export const useRelayStore = create<RelayState>()(
         set((s) => {
           const ex = s.exceptions.find((e) => e.id === id);
           const branchName = branches.find((b) => b.id === ex?.branchId)?.name ?? "Branch";
+          const customer = ex?.customer ?? "the escalation";
+          const at = iso();
+          const message = note
+            ? `Regional Operations approved ${customer} for ${branchName}. ${note}`
+            : `Regional Operations approved ${customer} for ${branchName}. Dispatch can proceed.`;
           return {
             exceptions: s.exceptions.map((e) =>
               e.id === id
                 ? {
                     ...e,
                     status: "approved",
-                    decision: { outcome: "approved", by: user, at: iso(), note },
+                    decision: { outcome: "approved", by: user, at, note },
                     audit: [
                       ...e.audit,
                       {
                         id: uid(),
-                        at: iso(),
+                        at,
                         actor: user,
                         actorRole: "manager",
                         action: "Approved escalation",
@@ -167,7 +169,7 @@ export const useRelayStore = create<RelayState>()(
                 id: uid(),
                 kind: "decision",
                 message,
-                at: iso(),
+                at,
                 read: false,
                 exceptionId: id,
                 actionLabel: "Open decision",
@@ -183,18 +185,19 @@ export const useRelayStore = create<RelayState>()(
         set((s) => {
           const ex = s.exceptions.find((e) => e.id === id);
           const branchName = branches.find((b) => b.id === ex?.branchId)?.name ?? "Branch";
+          const at = iso();
           return {
             exceptions: s.exceptions.map((e) =>
               e.id === id
                 ? {
                     ...e,
                     status: "denied",
-                    decision: { outcome: "denied", by: user, at: iso(), note },
+                    decision: { outcome: "denied", by: user, at, note },
                     audit: [
                       ...e.audit,
                       {
                         id: uid(),
-                        at: iso(),
+                        at,
                         actor: user,
                         actorRole: "manager",
                         action: "Denied escalation",
@@ -209,7 +212,7 @@ export const useRelayStore = create<RelayState>()(
                 id: uid(),
                 kind: "decision",
                 message: `Regional Operations denied ${ex?.customer ?? "the escalation"} for ${branchName}.`,
-                at: iso(),
+                at,
                 read: false,
                 exceptionId: id,
                 actionLabel: "Open decision",
@@ -223,6 +226,7 @@ export const useRelayStore = create<RelayState>()(
       assignTechnician: (id, techId) => {
         const tech = technicians.find((t) => t.id === techId);
         const user = get().currentUser.dispatcher;
+        const at = iso();
         set((s) => ({
           exceptions: s.exceptions.map((e) =>
             e.id === id
@@ -234,7 +238,7 @@ export const useRelayStore = create<RelayState>()(
                     ...e.audit,
                     {
                       id: uid(),
-                      at: iso(),
+                      at,
                       actor: user,
                       actorRole: "dispatcher",
                       action: `Assigned ${tech?.name ?? "technician"}`,
@@ -248,6 +252,7 @@ export const useRelayStore = create<RelayState>()(
 
       resolve: (id, note) => {
         const user = get().currentUser.dispatcher;
+        const at = iso();
         set((s) => ({
           exceptions: s.exceptions.map((e) =>
             e.id === id
@@ -258,7 +263,7 @@ export const useRelayStore = create<RelayState>()(
                     ...e.audit,
                     {
                       id: uid(),
-                      at: iso(),
+                      at,
                       actor: user,
                       actorRole: "dispatcher",
                       action: "Resolved",
@@ -274,6 +279,7 @@ export const useRelayStore = create<RelayState>()(
       addNote: (id, note) => {
         const s = get();
         const user = s.role === "dispatcher" ? s.currentUser.dispatcher : s.currentUser.manager;
+        const at = iso();
         set((cur) => ({
           exceptions: cur.exceptions.map((e) =>
             e.id === id
@@ -283,7 +289,7 @@ export const useRelayStore = create<RelayState>()(
                     ...e.audit,
                     {
                       id: uid(),
-                      at: iso(),
+                      at,
                       actor: user,
                       actorRole: s.role,
                       action: "Added internal note",
@@ -312,7 +318,17 @@ export const useRelayStore = create<RelayState>()(
     {
       name: "relay-ui",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ collapsedCards: s.collapsedCards }),
+      version: 2,
+      partialize: (s) => ({
+        role: s.role,
+        activeBranchId: s.activeBranchId,
+        currentUser: s.currentUser,
+        exceptions: s.exceptions,
+        decisionHistory: s.decisionHistory,
+        notifications: s.notifications,
+        collapsedCards: s.collapsedCards,
+        favoriteFilter: s.favoriteFilter,
+      }),
     },
   ),
 );

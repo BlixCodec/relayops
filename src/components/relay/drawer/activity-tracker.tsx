@@ -8,7 +8,7 @@ import type { AuditEvent } from "@/lib/relay/types";
 import { cn } from "@/lib/utils";
 
 function relative(iso: string, now: number) {
-  const nowMs = now === 0 ? new Date(iso).getTime() : now;
+  const nowMs = now || Date.now();
   const diff = nowMs - new Date(iso).getTime();
   const min = Math.floor(diff / 60_000);
   if (min < 1) return "just now";
