@@ -92,7 +92,7 @@ export function ExceptionDrawer({
       <Sheet open={!!exception} onOpenChange={(open) => !open && onClose()}>
         <SheetContent
           side="right"
-          className="w-full gap-0 overflow-y-auto rounded-l-xl border-slate-200 sm:max-w-md"
+          className="w-full gap-0 overflow-y-auto rounded-l-xl border-slate-200 shadow-drawer sm:max-w-md"
         >
           <SheetHeader className="border-b border-slate-200">
             <div className="flex items-center gap-2">
@@ -118,8 +118,14 @@ export function ExceptionDrawer({
                 <dt className="text-xs text-slate-500">SLA remaining</dt>
                 <dd
                   className={cn(
-                    "mt-0.5 text-lg font-semibold tabular-nums",
-                    sla.urgent ? "text-red-600" : "text-slate-900",
+                    "tnum mt-0.5 text-lg font-semibold",
+                    sla.tone === "breached"
+                      ? "text-red-700"
+                      : sla.tone === "critical"
+                        ? "text-red-600"
+                        : sla.tone === "warning"
+                          ? "text-amber-600"
+                          : "text-slate-900",
                   )}
                 >
                   {sla.met
@@ -266,7 +272,7 @@ export function ExceptionDrawer({
       </Sheet>
 
       <Dialog open={escalateOpen} onOpenChange={setEscalateOpen}>
-        <DialogContent className="border-slate-200 sm:max-w-md">
+        <DialogContent className="border-slate-200 shadow-panel sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold text-slate-900">
               Escalate to Regional Operations

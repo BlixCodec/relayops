@@ -42,31 +42,43 @@ export function useSecondsElapsed(): number {
   );
 }
 
+// Urgency thresholds in minutes (single source of truth).
+export const SLA_THRESHOLDS = {
+  critical: 15, // red + pulse
+  warning: 60, // amber
+};
+
+export type SlaTone = "met" | "breached" | "critical" | "warning" | "calm";
+
 export interface SlaInfo {
   /** Seconds left, clamped at 0. Null when the exception is resolved. */
   seconds: number | null;
+  tone: SlaTone;
   met: boolean;
   breached: boolean;
-  /** Under an hour (or breached) — render red. */
-  urgent: boolean;
 }
 
 export function slaInfo(e: Exception, elapsed: number): SlaInfo {
   if (e.status === "resolved")
-    return { seconds: null, met: true, breached: false, urgent: false };
+    return { seconds: null, tone: "met", met: true, breached: false };
   const seconds = Math.max(0, e.slaMinutesRemaining * 60 - elapsed);
-  const breached = seconds === 0;
-  return { seconds, met: false, breached, urgent: breached || seconds < 3600 };
+  const tone: SlaTone =
+    seconds === 0
+      ? "breached"
+      : seconds < SLA_THRESHOLDS.critical * 60
+        ? "critical"
+        : seconds < SLA_THRESHOLDS.warning * 60
+          ? "warning"
+          : "calm";
+  return { seconds, tone, met: false, breached: seconds === 0 };
 }
 
-// Under an hour: mm:ss ticking ("41:52"). An hour or more: "7h 00m" style.
+// "41m 52s" under an hour, "1h 33m 20s" above (Lovable port).
 export function formatSlaClock(totalSeconds: number): string {
-  if (totalSeconds < 3600) {
-    const m = Math.floor(totalSeconds / 60);
-    const s = totalSeconds % 60;
-    return `${m}:${String(s).padStart(2, "0")}`;
-  }
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.floor((totalSeconds % 3600) / 60);
-  return `${h}h ${String(m).padStart(2, "0")}m`;
+  const s = totalSeconds % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  if (h > 0) return `${h}h ${pad(m)}m ${pad(s)}s`;
+  return `${m}m ${pad(s)}s`;
 }

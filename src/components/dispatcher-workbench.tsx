@@ -42,13 +42,13 @@ export function DispatcherWorkbench() {
       </div>
 
       {active.length === 0 ? (
-        <div className="mt-10 flex flex-col items-center text-center">
+        <div className="mt-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white px-6 py-10 text-center">
           <Inbox
             className="size-5 text-slate-400"
             strokeWidth={1.5}
             aria-hidden
           />
-          <p className="mt-2 text-sm text-slate-900">
+          <p className="mt-3 text-sm text-slate-600">
             Nothing needs action — new exceptions land here the moment
             they&apos;re created.
           </p>

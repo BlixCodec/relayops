@@ -23,9 +23,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { BranchHealthStrip } from "@/components/branch-health-strip";
 import { ExceptionDrawer } from "@/components/exception-drawer";
 import { PriorityBadge } from "@/components/priority-badge";
+import { SlaCountdown } from "@/components/sla-countdown";
 import { getBranchById } from "@/lib/data";
 import { useRelay } from "@/lib/store";
-import { formatSlaClock, slaInfo, useSecondsElapsed } from "@/lib/use-sla";
 import { cn } from "@/lib/utils";
 import type { ApprovalType, Exception } from "@/lib/types";
 
@@ -77,13 +77,13 @@ export function DecisionQueue() {
       </p>
 
       {waiting.length === 0 ? (
-        <div className="mt-10 flex flex-col items-center text-center">
+        <div className="mt-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white px-6 py-10 text-center">
           <Inbox
             className="size-5 text-slate-400"
             strokeWidth={1.5}
             aria-hidden
           />
-          <p className="mt-2 text-sm text-slate-900">
+          <p className="mt-3 text-sm text-slate-600">
             No escalations waiting — nice.
           </p>
           <Button
@@ -136,7 +136,7 @@ export function DecisionQueue() {
           }
         }}
       >
-        <DialogContent className="border-slate-200 sm:max-w-md">
+        <DialogContent className="border-slate-200 shadow-panel sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold text-slate-900">
               {pending?.mode === "approved" ? "Approve" : "Deny"}{" "}
@@ -206,14 +206,13 @@ function DecisionRow({
   onDecide: (mode: "approved" | "denied") => void;
 }) {
   const branch = getBranchById(exception.branch);
-  const sla = slaInfo(exception, useSecondsElapsed());
   const approveIconRef = useRef<AnimatedIconHandle>(null);
   const denyIconRef = useRef<AnimatedIconHandle>(null);
   const escalation = exception.escalation;
   if (!escalation) return null;
 
   return (
-    <li className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+    <li className="rounded-xl border border-slate-200/60 bg-white px-4 py-3 shadow-card transition-shadow hover:shadow-panel">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div
           role="button"
@@ -240,29 +239,23 @@ function DecisionRow({
             {exception.issue}
           </p>
 
-          <blockquote className="mt-2 border-l-2 border-slate-200 pl-3 text-sm text-slate-900">
-            &ldquo;{escalation.reason}&rdquo;
+          <blockquote className="mt-2 rounded-md border-l-2 border-slate-300 bg-slate-50 px-3 py-2">
+            <p className="text-[11px] font-medium tracking-wide text-slate-500 uppercase">
+              Escalation reason
+            </p>
+            <p className="mt-0.5 text-sm text-slate-700">
+              &ldquo;{escalation.reason}&rdquo;
+            </p>
             <footer className="mt-1 text-xs text-slate-500">
               {escalation.escalatedBy} · {escalation.escalatedAt} ·{" "}
               {approvalLabels[escalation.requestedApproval]}
             </footer>
           </blockquote>
 
-          <p className="mt-2 flex items-center gap-3 text-xs text-slate-500">
-            <span
-              className={cn(
-                "font-medium tabular-nums",
-                sla.urgent ? "text-red-600" : "text-slate-900",
-              )}
-            >
-              {sla.breached
-                ? "SLA breached"
-                : `SLA ${formatSlaClock(sla.seconds ?? 0)}`}
-            </span>
-            <span aria-hidden>·</span>
+          <p className="mt-2 flex items-center gap-3 text-[11px] text-slate-500">
+            <SlaCountdown exception={exception} />
             <span>{branch?.name ?? exception.branch}</span>
-            <span aria-hidden>·</span>
-            <span className="tabular-nums">
+            <span className="tnum font-medium">
               ${exception.revenueAtRisk.toLocaleString()} at risk
             </span>
           </p>

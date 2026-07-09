@@ -1,40 +1,61 @@
-// AI Insight card per docs/design-spec.md: violet surface, small
-// "AI SUGGESTION" label, bold recommended action, reasoning bullets,
-// confidence tag. Rule-based stub — labeled as such, never hidden.
+// Recommended-action panel (Lovable port). Confidence chip + signal count
+// instead of the violet surface; the rule-based-stub disclosure stays —
+// stubs are labeled, never hidden (CLAUDE.md).
 
-import { Sparkles } from "lucide-react";
-import type { AiSuggestion } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import type { AiSuggestion, Confidence } from "@/lib/types";
 
-const confidenceLabels = {
-  high: "Confidence: High",
-  medium: "Confidence: Medium",
-  low: "Confidence: Low",
-} as const;
+const qualityTone: Record<Confidence, string> = {
+  high: "bg-emerald-50 text-emerald-700 ring-emerald-200/70",
+  medium: "bg-amber-50 text-amber-700 ring-amber-200/70",
+  low: "bg-slate-100 text-slate-600 ring-slate-200/70",
+};
+
+const qualityLabel: Record<Confidence, string> = {
+  high: "High confidence",
+  medium: "Medium confidence",
+  low: "Low confidence",
+};
 
 export function AiInsightCard({ suggestion }: { suggestion: AiSuggestion }) {
   return (
-    <div className="rounded-xl border border-violet-200 bg-violet-50 p-4">
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-violet-700">
-          <Sparkles className="size-3.5" aria-hidden />
-          AI suggestion
+    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
+      <header className="flex items-center gap-2">
+        <span className="text-[13px] font-semibold text-slate-900">
+          Recommended action
         </span>
-        <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700">
-          {confidenceLabels[suggestion.confidence]}
+        <span
+          className={cn(
+            "tnum ml-auto inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
+            qualityTone[suggestion.confidence],
+          )}
+        >
+          {qualityLabel[suggestion.confidence]}
+          <span className="text-slate-400">·</span>
+          {suggestion.reasons.length} signals
         </span>
-      </div>
-      <p className="mt-2 text-sm font-semibold text-slate-900">
+      </header>
+      <p className="mt-2.5 text-sm leading-snug font-semibold text-slate-900">
         {suggestion.action}
       </p>
-      <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-slate-600">
+      <ul className="mt-2.5 space-y-1.5">
         {suggestion.reasons.map((reason) => (
-          <li key={reason}>{reason}</li>
+          <li
+            key={reason}
+            className="flex gap-2 text-xs leading-relaxed text-slate-700"
+          >
+            <span
+              aria-hidden
+              className="mt-1.5 inline-block h-1 w-1 shrink-0 rounded-full bg-slate-400"
+            />
+            <span>{reason}</span>
+          </li>
         ))}
       </ul>
-      <p className="mt-3 text-xs text-violet-700">
+      <p className="mt-3 text-[11px] text-slate-400">
         Rule-based stub — in production, confidence derives from certification
         match, travel time, and SLA headroom.
       </p>
-    </div>
+    </section>
   );
 }
