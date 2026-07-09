@@ -44,7 +44,12 @@ dist-ssr
 .impeccable/live/*.png
 # impeccable-ignore-end
 
+# Local AI/agent tooling
+.agents/
+
 # Next.js build artifacts (legacy)
 .next/
 .vercel
 out/
+
+.vercel

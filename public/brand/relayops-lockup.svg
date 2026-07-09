@@ -1,0 +1,7 @@
+<svg width="520" height="128" viewBox="0 0 520 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">RelayOps</title>
+  <path d="M16 30H75.5C91.6 30 103.8 41.9 103.8 57.8C103.8 73.7 91.6 85.6 75.5 85.6H64.6L90.4 110H70L40.1 81.8H70.6C80.7 81.8 87.7 72.4 84.6 63C82.6 57.1 77.3 53.5 70.6 53.5H29L16 30Z" fill="#020617"/>
+  <path d="M16 63.5H38.7L76.4 110H53.8L16 63.5Z" fill="#020617"/>
+  <path d="M128 22V114" stroke="#020617" stroke-width="3" stroke-linecap="round"/>
+  <text x="158" y="81" fill="#020617" font-family="Geist, Inter, Arial, sans-serif" font-size="56" font-weight="500" letter-spacing="-2">RelayOps</text>
+</svg>

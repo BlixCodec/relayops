@@ -5,7 +5,7 @@ export function QuoteBlock({
   children,
   className,
 }: {
-  label?: string;
+  label?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {

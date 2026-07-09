@@ -2,8 +2,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PriorityBadge } from "./priority-badge";
 import { SlaCountdown } from "./sla-countdown";
-import { AvatarWithTooltip } from "./avatar-initials";
-import { CompanyLogo } from "./location-badge";
+import { AvatarWithTooltip, PersonMentionText } from "./avatar-initials";
+import { FacilityPhoto } from "./location-badge";
 import { DenyDialog } from "./deny-dialog";
 import { RecommendationTree } from "./recommendation-tree";
 import { useRelayStore, branchById } from "@/lib/relay/store";
@@ -15,7 +15,7 @@ export function DecisionRow({ exception }: { exception: Exception }) {
   const escalatedBy = exception.escalation?.by;
 
   return (
-    <article className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200/60 bg-white p-4 shadow-card md:grid-cols-[1fr_auto]">
+    <article className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200/60 bg-white p-4 shadow-card transition-colors hover:bg-slate-50/50 md:grid-cols-[1fr_auto]">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <PriorityBadge priority={exception.priority} />
@@ -35,33 +35,40 @@ export function DecisionRow({ exception }: { exception: Exception }) {
           </button>
         </div>
 
-        <h3 className="mt-1.5 flex items-center gap-2 text-sm font-semibold text-slate-900">
-          <CompanyLogo name={exception.customer} size={20} />
-          <span className="truncate">{exception.customer}</span>
-        </h3>
+        <div className="mt-2 flex min-w-0 items-start gap-3">
+          <FacilityPhoto name={exception.customer} size={42} className="rounded-full" />
+          <div className="min-w-0">
+            <h3 className="truncate text-sm font-semibold text-slate-900">{exception.customer}</h3>
+            {branch ? (
+              <p className="mt-0.5 truncate text-[11px] text-slate-500">{branch.name}</p>
+            ) : null}
+          </div>
+        </div>
 
         {exception.escalation ? (
-          <p className="mt-1 text-xs italic text-slate-700">"{exception.escalation.reason}"</p>
+          <p className="mt-1 text-xs italic leading-6 text-slate-700">
+            "<PersonMentionText text={exception.escalation.reason} />"
+          </p>
         ) : null}
 
         <RecommendationTree exception={exception} className="mt-3" />
 
         <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500">
           <SlaCountdown dueAt={exception.slaDueAt} />
-          <span className="inline-flex items-center gap-1.5">
-            <CompanyLogo name={branch?.name ?? "Branch"} size={14} />
-            {branch?.name}
-          </span>
+          {branch ? <span>{branch.name}</span> : null}
           <span className="tnum">${exception.revenueAtRisk.toLocaleString()} at risk</span>
         </div>
       </div>
 
-      <div className="flex items-end justify-end gap-2 md:flex-col md:items-stretch md:justify-between">
+      <div className="flex items-end justify-end gap-2 md:flex-col md:items-stretch md:justify-end">
         <Button
-          className="min-w-[110px]"
+          className="h-8 min-w-[112px] rounded-full bg-slate-900 px-4 text-xs text-white shadow-none hover:bg-slate-800"
           onClick={() => {
-            approve(exception.id);
-            toast("Decision approved. Dispatch has been notified.");
+            approve(
+              exception.id,
+              "Approved. Proceed with the recommended action and notify dispatch.",
+            );
+            toast("Decision approved with instructions. Dispatch has been notified.");
           }}
         >
           Approve
@@ -70,7 +77,10 @@ export function DecisionRow({ exception }: { exception: Exception }) {
           exceptionId={exception.id}
           customer={exception.customer}
           trigger={
-            <Button variant="ghost" className="min-w-[110px] text-slate-600 hover:text-slate-900">
+            <Button
+              variant="outline"
+              className="h-8 min-w-[112px] rounded-full border-slate-200 bg-white px-4 text-xs text-slate-700 shadow-none hover:bg-slate-50 hover:text-slate-950"
+            >
               Deny
             </Button>
           }

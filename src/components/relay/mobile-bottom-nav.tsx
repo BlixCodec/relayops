@@ -23,8 +23,9 @@ const managerNav = [
 export function MobileBottomNav() {
   const { role, currentUser } = useRelayStore();
   const path = useRouterState({ select: (r) => r.location.pathname });
-  const nav = role === "dispatcher" ? dispatcherNav : managerNav;
-  const user = role === "dispatcher" ? currentUser.dispatcher : currentUser.manager;
+  const effectiveRole = path.startsWith("/manager") ? "manager" : role;
+  const nav = effectiveRole === "dispatcher" ? dispatcherNav : managerNav;
+  const user = effectiveRole === "dispatcher" ? currentUser.dispatcher : currentUser.manager;
   const [switchOpen, setSwitchOpen] = useState(false);
 
   const isActive = (to: string) => {

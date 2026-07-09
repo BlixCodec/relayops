@@ -7,6 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
 import { useRelayStore } from "@/lib/relay/store";
 
 export function CommandSearch() {
@@ -27,7 +28,15 @@ export function CommandSearch() {
     <CommandDialog open={commandOpen} onOpenChange={(o) => toggleCommand(o)}>
       <CommandInput placeholder="Search exceptions, customers, technicians…" />
       <CommandList>
-        <CommandEmpty>No results · search is scoped to this workspace.</CommandEmpty>
+        <CommandEmpty>
+          <EmptyState
+            framed={false}
+            illustration={emptyStateIllustrations.noSearchResults}
+            artworkLabel="No exceptions matched your search. Try another keyword or clear your filters."
+            className="px-2 py-8"
+            imageClassName="max-w-[440px]"
+          />
+        </CommandEmpty>
         <CommandGroup heading="Exceptions">
           {exceptions.slice(0, 8).map((e) => (
             <CommandItem

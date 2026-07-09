@@ -1,0 +1,6 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">RelayOps mark</title>
+  <rect width="128" height="128" rx="28" fill="white"/>
+  <path d="M18 24H81.5C98.9 24 112 36.9 112 54.1C112 71.3 98.9 84.2 81.5 84.2H70.1L97.6 111H76.1L44.4 80.1H76.8C87.7 80.1 95.3 69.8 91.8 59.5C89.7 53.2 84 49.2 76.8 49.2H31.7L18 24Z" fill="#020617"/>
+  <path d="M18 60H42.2L82.4 111H58.3L18 60Z" fill="#020617"/>
+</svg>

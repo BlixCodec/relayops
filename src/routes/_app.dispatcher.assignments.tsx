@@ -4,9 +4,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/relay/page-header";
 import { StatusPill } from "@/components/relay/status-pill";
 import { SlaCountdown } from "@/components/relay/sla-countdown";
+import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
 import { useRelayStore, branchById, techById } from "@/lib/relay/store";
 import { AvatarWithTooltip } from "@/components/relay/avatar-initials";
-import { CompanyLogo } from "@/components/relay/location-badge";
+import { FacilityPhoto } from "@/components/relay/location-badge";
 
 export const Route = createFileRoute("/_app/dispatcher/assignments")({
   component: MyAssignments,
@@ -64,8 +65,16 @@ function MyAssignments() {
       />
 
       <div className="p-3 sm:p-6">
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="w-full min-w-[720px] text-sm">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-card">
+          <table className="w-full min-w-[960px] table-fixed text-sm">
+            <colgroup>
+              <col className="w-[270px]" />
+              <col className="w-[250px]" />
+              <col className="w-[140px]" />
+              <col className="w-[160px]" />
+              <col className="w-[120px]" />
+              <col className="w-[180px]" />
+            </colgroup>
             <thead className="border-b border-slate-200 bg-slate-50/60 text-[11px] uppercase tracking-wider text-slate-500">
               <tr>
                 <Th>Customer</Th>
@@ -84,24 +93,26 @@ function MyAssignments() {
                   <tr
                     key={e.id}
                     onClick={() => openDrawer(e.id)}
-                    className="cursor-pointer hover:bg-slate-50"
+                    className="cursor-pointer transition-colors hover:bg-slate-50/80"
                   >
                     <Td>
-                      <div className="flex items-center gap-2">
-                        <CompanyLogo name={e.customer} size={22} />
+                      <div className="flex items-center gap-3">
+                        <FacilityPhoto name={e.customer} size={42} />
                         <div className="min-w-0">
-                          <div className="font-medium text-slate-900">{e.customer}</div>
-                          <div className="text-[11px] text-slate-400">
+                          <div className="text-[13.5px] font-semibold leading-snug text-slate-900">
+                            {e.customer}
+                          </div>
+                          <div className="mt-1 text-[11px] leading-tight text-slate-400">
                             {branch?.name} · {e.id}
                           </div>
                         </div>
                       </div>
                     </Td>
-                    <Td className="max-w-[280px] truncate text-slate-600">{e.issueType}</Td>
-                    <Td>
+                    <Td className="text-[13px] leading-snug text-slate-600">{e.issueType}</Td>
+                    <Td className="text-[12px]">
                       <SlaCountdown dueAt={e.slaDueAt} />
                     </Td>
-                    <Td className="text-slate-700">
+                    <Td className="text-[13px] text-slate-700">
                       {tech ? (
                         <span className="inline-flex items-center gap-2">
                           <AvatarWithTooltip name={tech.name} size={20} />
@@ -114,14 +125,22 @@ function MyAssignments() {
                     <Td>
                       <StatusPill status={e.status} />
                     </Td>
-                    <Td className="text-slate-600">{nextAction(e.status)}</Td>
+                    <Td className="text-[13px] leading-snug text-slate-600">
+                      {nextAction(e.status)}
+                    </Td>
                   </tr>
                 );
               })}
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
-                    Nothing assigned in this view.
+                  <td colSpan={6}>
+                    <EmptyState
+                      framed={false}
+                      illustration={emptyStateIllustrations.noAssignments}
+                      artworkLabel="No assignments have been given yet. New work will appear here automatically."
+                      className="py-8"
+                      imageClassName="max-w-[520px]"
+                    />
                   </td>
                 </tr>
               ) : null}
@@ -134,8 +153,8 @@ function MyAssignments() {
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-2 text-left font-medium">{children}</th>;
+  return <th className="px-4 py-3 text-left font-medium">{children}</th>;
 }
 function Td({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-4 py-2.5 align-middle ${className ?? ""}`}>{children}</td>;
+  return <td className={`px-4 py-4 align-middle ${className ?? ""}`}>{children}</td>;
 }

@@ -36,7 +36,7 @@ Calm, decisive, trustworthy. "Calm enterprise ops tooling" (docs/design-spec.md)
 soft neutrals, generous whitespace, small refined type, borders over shadows.
 If a choice makes it feel like a landing page, it's wrong; if it makes it feel
 like software a dispatcher lives in for 8 hours, it's right. Microcopy gets
-care everywhere — the bar is software people *enjoy* using.
+care everywhere — the bar is software people _enjoy_ using.
 
 ## Anti-references
 
@@ -46,7 +46,7 @@ care everywhere — the bar is software people *enjoy* using.
   chart wall; branch health is exactly three pills, no charts
 - "Two dashboards over one table" — same data with no closed loop
 - Generic ticket trackers; this is not another ticket tracker
-- Placeholder text of any kind; the word "HVAC" anywhere
+- Placeholder text of any kind; the banned trade acronym anywhere
 
 ## Design Principles
 

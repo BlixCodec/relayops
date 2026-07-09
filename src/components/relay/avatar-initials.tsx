@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { portraitUrl } from "@/lib/relay/people";
+import { people, portraitUrl } from "@/lib/relay/people";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 function initials(name: string) {
@@ -141,14 +141,108 @@ export function AvatarCluster({
   return (
     <div className="flex items-center justify-center">
       <div className="flex -space-x-1.5">
-        {shown.map((n) => (
-          <AvatarWithTooltip key={n} name={n} size={size} active={activeSet.has(n)} />
-        ))}
+        {shown.map((n, index) => {
+          const active = activeSet.has(n);
+          return (
+            <span
+              key={n}
+              className="relative inline-flex"
+              style={{ zIndex: active ? shown.length + 1 : shown.length - index }}
+            >
+              <AvatarWithTooltip name={n} size={size} active={active} />
+            </span>
+          );
+        })}
       </div>
       {extra > 0 ? (
-        <span className="ml-1.5 text-[11px] font-medium text-slate-500">+{extra}</span>
+        <span
+          className="ml-1 inline-flex items-center justify-center rounded-full bg-slate-100 text-[10px] font-semibold text-slate-600 ring-1 ring-white"
+          style={{ width: size, height: size }}
+          aria-label={`${extra} more people`}
+        >
+          +{extra}
+        </span>
       ) : null}
     </div>
+  );
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const firstNameCounts = people.reduce<Record<string, number>>((counts, person) => {
+  const first = person.name.split(" ")[0].toLowerCase();
+  counts[first] = (counts[first] ?? 0) + 1;
+  return counts;
+}, {});
+const personAliases = people.flatMap((person) => {
+  const first = person.name.split(" ")[0];
+  return firstNameCounts[first.toLowerCase()] === 1 ? [person.name, first] : [person.name];
+});
+const personNames = [...personAliases].sort((a, b) => b.length - a.length);
+const canonicalPersonName = new Map(
+  people.flatMap((person) => {
+    const first = person.name.split(" ")[0];
+    const aliases =
+      firstNameCounts[first.toLowerCase()] === 1 ? [person.name, first] : [person.name];
+    return aliases.map((alias) => [alias.toLowerCase(), person.name] as const);
+  }),
+);
+const personNamePattern =
+  personNames.length > 0 ? new RegExp(`(${personNames.map(escapeRegExp).join("|")})`, "gi") : null;
+
+export function PersonMention({
+  name,
+  size = 16,
+  className,
+}: {
+  name: string;
+  size?: number;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "mx-0.5 inline-flex align-baseline items-center gap-1 rounded-full bg-white px-1.5 py-0.5 text-[11px] font-semibold leading-none normal-case tracking-normal text-indigo-700 ring-1 ring-indigo-100",
+        className,
+      )}
+    >
+      <AvatarInitials name={name} size={size} />
+      <span>{name}</span>
+    </span>
+  );
+}
+
+export function PersonMentionText({
+  text,
+  size = 16,
+  className,
+}: {
+  text: string;
+  size?: number;
+  className?: string;
+}) {
+  if (!personNamePattern) return <>{text}</>;
+
+  const parts = text.split(personNamePattern);
+  return (
+    <>
+      {parts.map((part, index) => {
+        const canonical = canonicalPersonName.get(part.toLowerCase());
+        if (canonical) {
+          return (
+            <PersonMention
+              key={`${canonical}-${index}`}
+              name={canonical}
+              size={size}
+              className={className}
+            />
+          );
+        }
+        return <span key={index}>{part}</span>;
+      })}
+    </>
   );
 }
 

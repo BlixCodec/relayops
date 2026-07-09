@@ -2,13 +2,14 @@ import { useState } from "react";
 import {
   AlertTriangle,
   ArrowUpRight,
-  BellOff,
   CheckCircle2,
   ChevronDown,
   Info,
   MessageSquareOff,
   X,
 } from "lucide-react";
+import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
+import { PersonMentionText } from "@/components/relay/avatar-initials";
 import { useRelayStore } from "@/lib/relay/store";
 import { cn } from "@/lib/utils";
 import type { Notification } from "@/lib/relay/types";
@@ -98,10 +99,13 @@ export function NotificationPopoverContent({ onNavigate }: { onNavigate?: () => 
 
       <div className="flex-1 overflow-y-auto px-2 py-2">
         {notifications.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-10 text-slate-400">
-            <BellOff className="h-4 w-4" />
-            <span className="text-[12px]">You are all caught up.</span>
-          </div>
+          <EmptyState
+            framed={false}
+            illustration={emptyStateIllustrations.noNotifications}
+            artworkLabel="You're all caught up. New operational updates will appear here."
+            className="px-2 py-8"
+            imageClassName="max-w-[300px]"
+          />
         ) : (
           <div className="space-y-1">
             {groups.map((g) => (
@@ -206,7 +210,9 @@ function Group({
                   aria-label="Open notification"
                 />
                 <div className="relative min-w-0 flex-1">
-                  <p className="text-[12.5px] leading-snug text-slate-800">{n.message}</p>
+                  <p className="text-[12.5px] leading-6 text-slate-800">
+                    <PersonMentionText text={n.message} />
+                  </p>
                   <div className="mt-1 flex items-center gap-2">
                     <span className="tnum text-[11px] text-slate-500">{relative(n.at)}</span>
                     {n.exceptionId ? (

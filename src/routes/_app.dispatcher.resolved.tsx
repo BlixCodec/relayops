@@ -5,7 +5,7 @@ import { PriorityBadge } from "@/components/relay/priority-badge";
 import { StatusPill } from "@/components/relay/status-pill";
 import { useRelayStore, branchById, techById } from "@/lib/relay/store";
 import { AvatarWithTooltip } from "@/components/relay/avatar-initials";
-import { CompanyLogo } from "@/components/relay/location-badge";
+import { FacilityPhoto } from "@/components/relay/location-badge";
 
 export const Route = createFileRoute("/_app/dispatcher/resolved")({
   component: Resolved,
@@ -32,8 +32,17 @@ function Resolved() {
         guidance="Review completed work and operational outcomes."
       />
       <div className="p-3 sm:p-6">
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table className="w-full min-w-[820px] text-sm">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-card">
+          <table className="w-full min-w-[980px] table-fixed text-sm">
+            <colgroup>
+              <col className="w-[270px]" />
+              <col className="w-[250px]" />
+              <col className="w-[130px]" />
+              <col className="w-[110px]" />
+              <col className="w-[120px]" />
+              <col className="w-[150px]" />
+              <col className="w-[120px]" />
+            </colgroup>
             <thead className="border-b border-slate-200 bg-slate-50/60 text-[11px] uppercase tracking-wider text-slate-500">
               <tr>
                 <Th>Customer</Th>
@@ -54,31 +63,39 @@ function Resolved() {
                   <tr
                     key={e.id}
                     onClick={() => openDrawer(e.id)}
-                    className="cursor-pointer hover:bg-slate-50"
+                    className="cursor-pointer transition-colors hover:bg-slate-50/80"
                   >
                     <Td>
-                      <div className="flex items-center gap-2">
-                        <CompanyLogo name={e.customer} size={22} />
+                      <div className="flex items-center gap-3">
+                        <FacilityPhoto name={e.customer} size={42} />
                         <div className="min-w-0">
-                          <div className="font-medium text-slate-900">{e.customer}</div>
-                          <div className="text-[11px] text-slate-400">{e.id}</div>
+                          <div className="text-[13.5px] font-semibold leading-snug text-slate-900">
+                            {e.customer}
+                          </div>
+                          <div className="mt-1 text-[11px] leading-tight text-slate-400">
+                            {e.id}
+                          </div>
                         </div>
                       </div>
                     </Td>
-                    <Td className="max-w-[280px] truncate text-slate-600">{e.issueType}</Td>
-                    <Td className="text-slate-700">
+                    <Td className="text-[13px] leading-snug text-slate-600">{e.issueType}</Td>
+                    <Td className="text-[13px] text-slate-700">
                       <span className="inline-flex items-center gap-2">
-                        <CompanyLogo name={branch?.name ?? "Branch"} size={18} />
+                        <FacilityPhoto
+                          name={branch?.name ?? "Branch"}
+                          size={24}
+                          className="rounded-full"
+                        />
                         {branch?.name}
                       </span>
                     </Td>
                     <Td>
                       <PriorityBadge priority={e.priority} />
                     </Td>
-                    <Td className="tnum text-slate-600">
+                    <Td className="tnum text-[13px] leading-snug text-slate-600">
                       <ClientDate iso={lastAudit?.at ?? e.createdAt} />
                     </Td>
-                    <Td className="text-slate-700">
+                    <Td className="text-[13px] text-slate-700">
                       <span className="inline-flex items-center gap-2">
                         <AvatarWithTooltip name={tech?.name ?? e.ownerDispatcher} size={20} />
                         <span>{tech?.name ?? e.ownerDispatcher}</span>
@@ -106,10 +123,10 @@ function Resolved() {
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-2 text-left font-medium">{children}</th>;
+  return <th className="px-4 py-3 text-left font-medium">{children}</th>;
 }
 function Td({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-4 py-2.5 align-middle ${className ?? ""}`}>{children}</td>;
+  return <td className={`px-4 py-4 align-middle ${className ?? ""}`}>{children}</td>;
 }
 
 function ClientDate({ iso }: { iso: string }) {

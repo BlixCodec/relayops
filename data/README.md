@@ -1,6 +1,6 @@
 # Seed data
 
-Reviewed mock data for RelayOps. After scaffolding Next.js, keep these under
+Reviewed mock data for RelayOps. After scaffolding TanStack Start, keep these under
 `/data` (or move to `/src/data`) and import directly — no fetch, no API route.
 
 - `branches.json` — 3 branches matching the health pills: North ● Stable,
@@ -16,4 +16,4 @@ Reviewed mock data for RelayOps. After scaffolding Next.js, keep these under
 
 Consistency rules if you edit: every `aiSuggestion.reasons` claim must be
 backed by the tech/branch data (skills, ETA, availability). SLA minutes,
-priorities, and statuses must agree with each other. No "HVAC" anywhere.
+priorities, and statuses must agree with each other. Do not use the banned trade acronym anywhere.

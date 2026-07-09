@@ -20,10 +20,15 @@ import {
 } from "lucide-react";
 import { recommendationTree } from "@/lib/relay/recommendation-tree";
 import { useNow } from "@/lib/relay/use-now";
-import { AvatarInitials } from "./avatar-initials";
+import { AvatarInitials, PersonMentionText } from "./avatar-initials";
 import { cn } from "@/lib/utils";
 import type { Exception } from "@/lib/relay/types";
 import type { TreeItem } from "@/lib/relay/recommendation-tree";
+
+const connectedLineClass =
+  "relative flex items-start gap-2 pl-4 before:absolute before:left-0 before:top-[9px] before:h-px before:w-2.5 before:border-t before:border-dashed before:border-slate-300/80";
+const connectedCenterLineClass =
+  "relative flex items-center gap-2 pl-4 before:absolute before:left-0 before:top-1/2 before:h-px before:w-2.5 before:-translate-y-1/2 before:border-t before:border-dashed before:border-slate-300/80";
 
 // Keyword → glyph so each reasoning line reads at a glance (reference style).
 const iconRules: Array<{ match: RegExp; icon: LucideIcon }> = [
@@ -88,7 +93,7 @@ export function RecommendationTree({
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-2">
         <span className="text-[14px] font-semibold tracking-tight text-slate-900">
-          {tree.action}
+          <PersonMentionText text={tree.action} />
         </span>
         <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-medium text-violet-700">
           AI suggestion
@@ -111,7 +116,7 @@ export function RecommendationTree({
           </Column>
 
           <Column label="Timeline">
-            <li className="flex items-start gap-2">
+            <li className={connectedLineClass}>
               {breached ? (
                 <TimerOff
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500"
@@ -140,7 +145,7 @@ export function RecommendationTree({
               </span>
             </li>
             {tree.timeline.slice(1).map((item) => (
-              <li key={item.text} className="flex items-start gap-2">
+              <li key={item.text} className={connectedLineClass}>
                 <Clock
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400"
                   strokeWidth={2}
@@ -148,7 +153,11 @@ export function RecommendationTree({
                 />
                 <span className="min-w-0 text-[12px] leading-snug text-slate-700">
                   {item.text}
-                  {item.sub ? <span className="tnum block text-slate-500">{item.sub}</span> : null}
+                  {item.sub ? (
+                    <span className="tnum block text-slate-500" suppressHydrationWarning>
+                      {item.sub}
+                    </span>
+                  ) : null}
                 </span>
               </li>
             ))}
@@ -157,13 +166,13 @@ export function RecommendationTree({
           <Column label="Recommended">
             {tree.tech ? (
               <>
-                <li className="flex items-center gap-2">
+                <li className={connectedCenterLineClass}>
                   <AvatarInitials name={tree.tech.name} size={22} />
                   <span className="text-[12.5px] font-semibold text-slate-900">
                     {tree.tech.name}
                   </span>
                 </li>
-                <li className="flex items-start gap-2">
+                <li className={connectedLineClass}>
                   <Timer
                     className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600"
                     strokeWidth={2}
@@ -173,7 +182,7 @@ export function RecommendationTree({
                     {tree.tech.minutesAway} min away
                   </span>
                 </li>
-                <li className="flex items-start gap-2">
+                <li className={connectedLineClass}>
                   <Check
                     className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600"
                     strokeWidth={2.5}
@@ -186,7 +195,7 @@ export function RecommendationTree({
               </>
             ) : (
               tree.recommendedFallback.map((item) => (
-                <li key={item.text} className="flex items-start gap-2">
+                <li key={item.text} className={connectedLineClass}>
                   <Check
                     className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600"
                     strokeWidth={2.5}
@@ -212,7 +221,9 @@ function Column({ label, children }: { label: string; children: React.ReactNode 
         className="absolute -top-3 left-1.5 h-3 border-l border-dashed border-slate-300/80"
       />
       <h4 className="text-[12px] font-medium text-slate-800">{label}</h4>
-      <ul className="mt-2 space-y-2">{children}</ul>
+      <ul className="relative mt-2 space-y-2 pl-1 before:absolute before:left-1 before:bottom-1 before:top-1 before:border-l before:border-dashed before:border-slate-300/80">
+        {children}
+      </ul>
     </div>
   );
 }
@@ -220,7 +231,7 @@ function Column({ label, children }: { label: string; children: React.ReactNode 
 function Line({ item }: { item: TreeItem }) {
   const Icon = iconFor(item.text);
   return (
-    <li className="flex items-start gap-2">
+    <li className={connectedLineClass}>
       <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" strokeWidth={2} aria-hidden />
       <span className="min-w-0 text-[12px] leading-snug text-slate-700">
         {item.text}

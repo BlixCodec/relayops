@@ -15,7 +15,7 @@ complying.
 - Stubs are labeled in the UI as deliberate ("stubbed — see notes"), never
   hidden.
 - All copy is hand-written per the microcopy rules in the design spec. No
-  placeholder text ever. No lorem ipsum. The word "HVAC" must not appear
+  placeholder text or filler copy ever. The banned trade acronym must not appear
   anywhere in this repo.
 
 ## Definition of done — the 40-second loop

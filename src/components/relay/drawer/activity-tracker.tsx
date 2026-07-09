@@ -1,5 +1,7 @@
-import { ArrowUpRight, Bookmark, CheckCircle2, MoreHorizontal, XCircle } from "lucide-react";
-import { AvatarInitials } from "../avatar-initials";
+import { ArrowUpRight, CheckCircle2, XCircle } from "lucide-react";
+import { AvatarInitials, PersonMentionText } from "../avatar-initials";
+import { BrandMark } from "../brand-logo";
+import { EmptyState, emptyStateIllustrations } from "../empty-state";
 import { roleFor } from "@/lib/relay/people";
 import { useNow } from "@/lib/relay/use-now";
 import type { AuditEvent } from "@/lib/relay/types";
@@ -79,6 +81,21 @@ function groupByActor(events: AuditEvent[]): AuditEvent[][] {
   return groups;
 }
 
+function ActorMark({ name }: { name: string }) {
+  if (name.toLowerCase() === "system") {
+    return (
+      <span
+        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-slate-200"
+        aria-label="RelayOps system"
+      >
+        <BrandMark className="h-5 w-5" />
+      </span>
+    );
+  }
+
+  return <AvatarInitials name={name} size={36} className="shadow-sm" />;
+}
+
 function EventCard({ e, now }: { e: AuditEvent; now: number }) {
   const hi = highlightKind(e);
 
@@ -87,33 +104,19 @@ function EventCard({ e, now }: { e: AuditEvent; now: number }) {
     const Icon = cfg.icon;
     return (
       <div className={cn("rounded-xl border px-4 py-3 shadow-card", cfg.bg, cfg.border)}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center">
           <span className="tnum text-[11px] font-medium text-slate-500">{relative(e.at, now)}</span>
-          <div className="flex items-center gap-1 text-slate-400">
-            <button
-              type="button"
-              aria-label="Bookmark"
-              className="rounded p-0.5 hover:bg-white/60 hover:text-slate-600"
-            >
-              <Bookmark className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              aria-label="More"
-              className="rounded p-0.5 hover:bg-white/60 hover:text-slate-600"
-            >
-              <MoreHorizontal className="h-3.5 w-3.5" />
-            </button>
-          </div>
         </div>
         <div className={cn("mt-1.5 flex items-center gap-2 text-[13px] font-medium", cfg.text)}>
           <Icon className="h-4 w-4 shrink-0" />
           <span>
-            {cfg.label}: {e.action}
+            {cfg.label}: <PersonMentionText text={e.action} />
           </span>
         </div>
         {e.note ? (
-          <p className={cn("mt-1.5 text-[12px] italic", cfg.text, "opacity-90")}>"{e.note}"</p>
+          <p className={cn("mt-1.5 text-[12px] italic leading-6", cfg.text, "opacity-90")}>
+            "<PersonMentionText text={e.note} />"
+          </p>
         ) : null}
       </div>
     );
@@ -121,28 +124,16 @@ function EventCard({ e, now }: { e: AuditEvent; now: number }) {
 
   return (
     <div className="rounded-xl bg-white px-4 py-3 shadow-card ring-1 ring-slate-200/60">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <span className="tnum text-[11px] font-medium text-slate-400">{relative(e.at, now)}</span>
-        <div className="flex items-center gap-1 text-slate-300">
-          <button
-            type="button"
-            aria-label="Bookmark"
-            className="rounded p-0.5 hover:bg-slate-100 hover:text-slate-500"
-          >
-            <Bookmark className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            aria-label="More"
-            className="rounded p-0.5 hover:bg-slate-100 hover:text-slate-500"
-          >
-            <MoreHorizontal className="h-3.5 w-3.5" />
-          </button>
-        </div>
       </div>
-      <p className="mt-1.5 text-[13px] leading-relaxed text-slate-800">{e.action}</p>
+      <p className="mt-1.5 text-[13px] leading-6 text-slate-800">
+        <PersonMentionText text={e.action} />
+      </p>
       {e.note ? (
-        <p className="mt-1.5 text-[12px] leading-relaxed text-slate-600">{e.note}</p>
+        <p className="mt-1.5 text-[12px] leading-6 text-slate-600">
+          <PersonMentionText text={e.note} />
+        </p>
       ) : null}
     </div>
   );
@@ -152,16 +143,34 @@ export function ActivityTracker({ events }: { events: AuditEvent[] }) {
   const now = useNow();
   const groups = groupByActor(events);
 
+  if (events.length === 0) {
+    return (
+      <EmptyState
+        framed={false}
+        illustration={emptyStateIllustrations.noActivity}
+        artworkLabel="No operational history has been recorded yet. Actions taken on this exception will appear here."
+        className="py-6"
+        imageClassName="max-w-[420px]"
+      />
+    );
+  }
+
   return (
-    <ol className="space-y-6">
+    <ol
+      className="relative space-y-6 rounded-2xl border border-slate-200/60 bg-slate-50/70 p-3"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 1px 1px, rgba(71, 85, 105, 0.16) 1px, transparent 0)",
+        backgroundSize: "18px 18px",
+      }}
+    >
       {groups.map((group, gi) => {
         const head = group[0];
         const role = roleFor(head.actor);
         return (
           <li key={gi} className="relative">
-            {/* Person cluster header */}
             <div className="flex items-center gap-2.5">
-              <AvatarInitials name={head.actor} size={32} />
+              <ActorMark name={head.actor} />
               <div className="min-w-0">
                 <div className="text-[13px] font-semibold leading-tight text-slate-900">
                   {head.actor}

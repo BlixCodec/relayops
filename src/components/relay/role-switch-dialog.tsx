@@ -42,7 +42,7 @@ export function RoleSwitchDialog({
 
   const confirm = () => {
     setRole(pending);
-    navigate({ to: pending === "dispatcher" ? "/dispatcher/today" : "/manager/today" });
+    navigate({ to: pending === "dispatcher" ? "/dispatcher/today" : "/manager" });
     onOpenChange(false);
   };
 

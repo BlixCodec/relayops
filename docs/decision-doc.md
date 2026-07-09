@@ -1,10 +1,12 @@
 # RelayOps — Decision Doc
+
 Field-service exception management for a multi-branch service company.
-*Internal planning doc. Wed 7/8 — FINAL. No more revision loops; next step is code.*
+_Internal planning doc. Wed 7/8 — FINAL. No more revision loops; next step is code._
 
 **Success metric (design target, state it in the write-up):** a dispatcher understands what needs attention within 10 seconds of landing; a manager resolves an escalation in under 30 seconds.
 
 **Build priority if time runs short (cut from the bottom, never the top):**
+
 1. Closed loop works end-to-end (escalate → decide → flows back)
 2. Mock data feels real
 3. Microcopy: toasts, empty states, button labels
@@ -22,9 +24,11 @@ Meridian doesn't need another ticket tracker. Each role needs one answer: **"Wha
 ## 2. Roles (both make decisions — nobody just watches)
 
 **Dispatcher (branch level).** Triage today's exceptions, assign the right technician, escalate what exceeds their authority.
+
 - Decisions: assign/reassign tech, set priority, escalate to manager.
 
 **Operations Manager (regional).** Work a queue of escalations that need their sign-off, with branch health as context — not the main event.
+
 - Decisions: approve/deny overtime, approve cross-branch tech transfer, approve goodwill credit, deny with instructions.
 
 ## 3. The closed-loop workflow (the core of the app)
@@ -51,6 +55,7 @@ The loop is the differentiator. Same data, two roles, and each role's action cha
 **AI touch (one, honest):** an "AI Insight" card per exception — no chatbot, no prompt box:
 
 > **Recommended: Reassign to Marcus R.** · Confidence: High
+>
 > - Certified on refrigeration
 > - 8 minutes away
 > - Keeps SLA with 42 min headroom
@@ -62,7 +67,7 @@ Rule-based stub, labeled as such. If Jason asks how confidence is computed: "In 
 
 **Audit trail = vertical timeline, not a text log:** timestamp + actor + action per entry (09:12 Dispatcher assigned Marcus → 09:18 Escalated → 09:21 Manager approved transfer → 09:22 Dispatcher notified).
 
-**Microcopy gets care everywhere** — toasts, empty states, buttons. Not "Escalated." but: "Escalation sent to Regional Operations — a manager will review shortly." Jason's bar is software people *enjoy* using.
+**Microcopy gets care everywhere** — toasts, empty states, buttons. Not "Escalated." but: "Escalation sent to Regional Operations — a manager will review shortly." Jason's bar is software people _enjoy_ using.
 
 ## 5. Deliberately stubbed (say so in the UI and the write-up)
 
@@ -73,7 +78,7 @@ Rule-based stub, labeled as such. If Jason asks how confidence is computed: "In 
 
 ## 6. Data
 
-Local JSON, no database. Entities: branches (3 shown), technicians (8), exceptions (~12), activity log. Mock data must feel real — exception types: equipment failure, missed appointment window, parts delay, repeat-visit callback, safety flag. Real names, plausible SLA timestamps relative to "today," dollar amounts that make sense. **No lorem ipsum anywhere. No "HVAC" anywhere.**
+Local JSON, no database. Entities: branches (3 shown), technicians (8), exceptions (~12), activity log. Mock data must feel real — exception types: equipment failure, missed appointment window, parts delay, repeat-visit callback, safety flag. Real names, plausible SLA timestamps relative to "today," dollar amounts that make sense. **No placeholder filler copy anywhere. Do not use the banned trade acronym anywhere.**
 
 Quality bar per exception (this level of specificity, every record):
 
@@ -83,7 +88,7 @@ Quality bar per exception (this level of specificity, every record):
 
 ## 7. Stack
 
-Next.js + TypeScript + Tailwind + shadcn/ui, local JSON, React state, deployed on Vercel (free tier). No Supabase, no CSV, no over-engineering.
+TanStack Start + Vite + TypeScript + Tailwind + shadcn/ui, local seed data, in-memory React/Zustand state, deployed on Vercel (free tier). No Supabase, no CSV, no over-engineering.
 
 ## 8. Submission answers (draft now, refine Fri)
 
@@ -92,6 +97,7 @@ Next.js + TypeScript + Tailwind + shadcn/ui, local JSON, React state, deployed o
 **AI tools used.** Claude for scaffolding components and generating realistic mock data; Claude Code / Cursor for fast iteration. Product decisions — which workflow, which role sees what, what to stub — were made before prompting anything. AI accelerated the build; it didn't choose what to build.
 
 **First three production improvements.**
+
 1. **Real auth + role-based permissions** — replace the stub with server-enforced RBAC so escalation authority and audit entries are tied to verified identity.
 2. **Persistent store with an append-only audit log** — exception decisions are compliance-relevant; the trail must be immutable and queryable, not React state.
 3. **SLA-driven escalation routing + notifications** — timers that auto-escalate approaching breaches and notify the on-call manager, so the system surfaces risk instead of waiting to be checked.
@@ -109,7 +115,7 @@ Next.js + TypeScript + Tailwind + shadcn/ui, local JSON, React state, deployed o
 
 > Jason — here's my submission.
 >
-> **Live app:** [vercel link] · **Walkthrough (2 min):** [optional link]
+> **Live app:** [add deployed URL] · **Walkthrough (2 min):** [optional link]
 >
 > I built Relay, an exception-management workflow for a multi-branch field-service company. Two roles, one closed loop: dispatchers triage and escalate; managers decide; decisions flow back with a full audit trail. [3–4 sentences: uniqueness, AI tools, three improvements — from §8.]
 >

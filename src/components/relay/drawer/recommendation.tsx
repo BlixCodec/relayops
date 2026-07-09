@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { PersonMentionText } from "../avatar-initials";
 import type { Recommendation } from "@/lib/relay/types";
 
 const qualityTone: Record<Recommendation["quality"], string> = {
@@ -27,13 +28,17 @@ export function RecommendationCard({ rec }: { rec: Recommendation }) {
           ) : null}
         </span>
       </header>
-      <p className="mt-2.5 text-[14px] font-semibold leading-snug text-slate-900">{rec.action}</p>
+      <p className="mt-2.5 text-[14px] font-semibold leading-snug text-slate-900">
+        <PersonMentionText text={rec.action} />
+      </p>
       {rec.bullets.length > 0 ? (
         <ul className="mt-2.5 space-y-1.5">
           {rec.bullets.map((b, i) => (
             <li key={i} className="flex gap-2 text-[12px] leading-relaxed text-slate-700">
               <span className="mt-1.5 inline-block h-1 w-1 shrink-0 rounded-full bg-slate-400" />
-              <span>{b}</span>
+              <span>
+                <PersonMentionText text={b} />
+              </span>
             </li>
           ))}
         </ul>

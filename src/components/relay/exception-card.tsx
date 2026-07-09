@@ -4,9 +4,9 @@ import { PriorityBadge } from "./priority-badge";
 import { StatusDot } from "./status-pill";
 import { SlaCountdown } from "./sla-countdown";
 import { AvatarInitials, AvatarWithTooltip } from "./avatar-initials";
-import { LocationBadge } from "./location-badge";
+import { FacilityPhoto } from "./location-badge";
 import { techById } from "@/lib/relay/store";
-import { ChevronDown, Star } from "lucide-react";
+import { ArrowRight, ChevronDown, Star } from "lucide-react";
 import { toast } from "sonner";
 import { RecommendationTree } from "./recommendation-tree";
 import { cn } from "@/lib/utils";
@@ -46,10 +46,24 @@ export function ExceptionCard({
         aria-label={`Open ${exception.customer}`}
       />
 
-      <div className="relative flex min-w-0 items-center gap-2">
-        <LocationBadge name={exception.customer} size={22} />
-        <PriorityBadge priority={exception.priority} />
-        <span className="tnum hidden text-[11px] text-slate-400 sm:inline">{exception.id}</span>
+      <div className="relative flex min-w-0 items-start gap-3">
+        <FacilityPhoto name={exception.customer} size={40} />
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <PriorityBadge priority={exception.priority} />
+            <span className="tnum hidden text-[11px] text-slate-400 sm:inline">{exception.id}</span>
+          </div>
+          <div className="mt-1.5 flex min-w-0 items-center gap-2">
+            <div className="min-w-0 flex-1 truncate text-[13.5px] font-semibold text-slate-900 sm:text-sm">
+              {exception.customer}
+            </div>
+            {tech ? (
+              <span className="relative z-10 shrink-0">
+                <AvatarWithTooltip name={tech.name} size={18} />
+              </span>
+            ) : null}
+          </div>
+        </div>
         <span className="ml-auto flex shrink-0 items-center gap-1">
           <button
             type="button"
@@ -86,22 +100,9 @@ export function ExceptionCard({
         </span>
       </div>
 
-      <div className="relative mt-1.5 flex min-w-0 items-center gap-2">
-        <div className="min-w-0 flex-1 truncate text-[13.5px] font-semibold text-slate-900 sm:text-sm">
-          {exception.customer}
-        </div>
-        {tech ? (
-          <span className="relative z-10 shrink-0">
-            <AvatarWithTooltip name={tech.name} size={18} />
-          </span>
-        ) : null}
-      </div>
-
       {!collapsed ? (
         <>
-          <div className="relative mt-0.5 line-clamp-1 text-xs text-slate-500">
-            {exception.issue}
-          </div>
+          <div className="relative mt-2 line-clamp-1 text-xs text-slate-500">{exception.issue}</div>
 
           {exception.status !== "resolved" && exception.recommendation.bullets.length > 0 ? (
             <div className="pointer-events-none relative mt-2.5">
@@ -109,25 +110,51 @@ export function ExceptionCard({
             </div>
           ) : null}
 
-          <div className="relative mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
-            <SlaCountdown dueAt={exception.slaDueAt} compact />
-            <span className="inline-flex items-center gap-1.5">
-              <StatusDot status={exception.status} />
-              <span className="capitalize">{exception.status}</span>
-            </span>
-            <span className="hidden sm:inline">{branch?.name ?? "·"}</span>
-            <span className="tnum">${exception.revenueAtRisk.toLocaleString()} at risk</span>
-            {tech ? (
-              <span className="ml-auto hidden items-center gap-1.5 sm:inline-flex">
-                <AvatarInitials name={tech.name} size={16} />
-                <span className="text-slate-600">{tech.name}</span>
+          <div className="relative mt-3 flex flex-col gap-2 border-t border-slate-100 pt-2.5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+              <SlaCountdown dueAt={exception.slaDueAt} compact />
+              <span className="inline-flex items-center gap-1.5">
+                <StatusDot status={exception.status} />
+                <span className="capitalize">{exception.status}</span>
               </span>
-            ) : null}
+              <span className="hidden sm:inline">{branch?.name ?? "·"}</span>
+              <span className="tnum">${exception.revenueAtRisk.toLocaleString()} at risk</span>
+              {tech ? (
+                <span className="hidden items-center gap-1.5 sm:inline-flex">
+                  <AvatarInitials name={tech.name} size={16} />
+                  <span className="text-slate-600">{tech.name}</span>
+                </span>
+              ) : null}
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                openDrawer(exception.id);
+              }}
+              className="relative z-10 inline-flex h-7 w-fit items-center gap-1.5 self-end rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              aria-label={`Open ${exception.customer} side panel`}
+            >
+              Open panel
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
           </div>
         </>
       ) : (
-        <div className="relative mt-1.5">
+        <div className="relative mt-3 flex items-center justify-between gap-3 border-t border-slate-100 pt-2.5">
           <SlaCountdown dueAt={exception.slaDueAt} compact />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDrawer(exception.id);
+            }}
+            className="relative z-10 inline-flex h-7 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            aria-label={`Open ${exception.customer} side panel`}
+          >
+            Open panel
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
     </div>

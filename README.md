@@ -4,7 +4,7 @@ Exception management for a multi-branch field-service company. Two roles, one
 closed loop: dispatchers triage and escalate; operations managers decide;
 decisions flow back to the floor with a full audit trail.
 
-**Live app:** _[Vercel link — add before submitting]_
+**Live app:** https://relayops-delta.vercel.app
 
 ## The problem
 
@@ -18,9 +18,9 @@ Meridian doesn't need another ticket tracker. Each role needs one answer:
 
 ## Roles
 
-| Role | Decides |
-|---|---|
-| **Dispatcher** (branch) | Priority, technician assignment, when to escalate |
+| Role                              | Decides                                                                                |
+| --------------------------------- | -------------------------------------------------------------------------------------- |
+| **Dispatcher** (branch)           | Priority, technician assignment, when to escalate                                      |
 | **Operations Manager** (regional) | Overtime, cross-branch transfers, goodwill credits — approve or deny with instructions |
 
 Both roles make decisions. Nobody just watches a dashboard.
@@ -45,8 +45,12 @@ time, and SLA headroom.
 
 ## AI tools used
 
-_[Finalize before submitting — keep honest and specific: what Claude Code /
-Claude generated, what was decided by hand before prompting.]_
+I used ChatGPT/Codex as an AI pair-programmer to scaffold React components,
+iterate on UI polish, generate realistic seed data, and run QA checks quickly.
+The product decisions came first: the business problem, two-role workflow,
+what each role should decide, what to stub, and the 40-second closed loop were
+defined before implementation. AI accelerated the build; it did not choose the
+problem or the workflow.
 
 ## First three production improvements
 
@@ -61,7 +65,16 @@ Claude generated, what was decided by hand before prompting.]_
 
 ## Stack
 
-Next.js · TypeScript · Tailwind · shadcn/ui · local JSON · Vercel
+TanStack Start · Vite · TypeScript · Tailwind · shadcn/ui · Zustand · local
+seed data · Vercel
+
+## Prototype notes
+
+RelayOps intentionally uses stubbed role login and in-memory exception state
+for the evaluation. The workflow persists while switching roles in the same
+session; refreshing the page resets exception decisions back to the seed data,
+which is acceptable for the prototype and called out here so review behavior is
+predictable.
 
 ## Docs
 

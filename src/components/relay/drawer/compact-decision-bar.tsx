@@ -22,13 +22,13 @@ function ActionButton({
   icon: Icon,
   label,
   onClick,
-  variant = "ghost",
+  tone = "neutral",
   disabled,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   onClick?: () => void;
-  variant?: "primary" | "ghost";
+  tone?: "neutral" | "escalate" | "success";
   disabled?: boolean;
 }) {
   return (
@@ -37,10 +37,12 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "inline-flex h-8 flex-1 min-w-0 items-center justify-center gap-1.5 rounded-md border px-2 text-[12px] font-medium transition-colors",
-        variant === "primary"
-          ? "border-slate-900 bg-slate-900 text-white hover:bg-slate-800"
-          : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
+        "inline-flex h-9 w-full min-w-0 items-center justify-center gap-1.5 rounded-lg border px-3 text-[12.5px] font-medium transition-colors",
+        tone === "escalate"
+          ? "border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100"
+          : tone === "success"
+            ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+            : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
         disabled && "cursor-not-allowed opacity-50",
       )}
     >
@@ -93,11 +95,11 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
   };
 
   return (
-    <section className="border-t border-slate-200 bg-white p-3">
-      <div className="flex flex-wrap items-center gap-1.5 sm:flex-nowrap">
+    <section className="border-t border-slate-200 bg-white px-3 py-3">
+      <div className="grid grid-cols-3 gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0">
               <ActionButton icon={UserPlus} label="Assign" />
             </div>
           </PopoverTrigger>
@@ -127,11 +129,11 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
 
         <Dialog open={escalateOpen} onOpenChange={setEscalateOpen}>
           <DialogTrigger asChild>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0">
               <ActionButton
                 icon={ArrowUpRight}
                 label="Escalate"
-                variant="primary"
+                tone="escalate"
                 disabled={!canEscalate}
               />
             </div>
@@ -146,6 +148,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
               </Label>
               <Textarea
                 id="reason"
+                name="escalation-reason"
                 value={escalateReason}
                 onChange={(e) => setEscalateReason(e.target.value)}
                 placeholder="Requesting approval to authorize cross-branch transfer of Lena Kowalski from Southbrook."
@@ -175,10 +178,11 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
           </DialogContent>
         </Dialog>
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <ActionButton
             icon={Check}
             label="Resolve"
+            tone="success"
             disabled={!canResolve}
             onClick={() => {
               resolve(exception.id);
@@ -188,9 +192,10 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
         </div>
       </div>
 
-      <div className="mt-2 rounded-md border border-slate-200 bg-white focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400">
+      <div className="mt-3 rounded-lg border border-slate-200 bg-white focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400">
         <div className="flex items-start gap-1.5">
           <Textarea
+            name="internal-comment"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             onFocus={() => setExpanded(true)}

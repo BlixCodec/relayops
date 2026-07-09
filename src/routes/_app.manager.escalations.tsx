@@ -5,6 +5,9 @@ import { PageHeader } from "@/components/relay/page-header";
 import { PriorityBadge } from "@/components/relay/priority-badge";
 import { StatusPill } from "@/components/relay/status-pill";
 import { SlaCountdown } from "@/components/relay/sla-countdown";
+import { AvatarInitials, PersonMentionText } from "@/components/relay/avatar-initials";
+import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
+import { FacilityPhoto } from "@/components/relay/location-badge";
 import { Input } from "@/components/ui/input";
 import { useRelayStore, branchById } from "@/lib/relay/store";
 import { cn } from "@/lib/utils";
@@ -54,6 +57,7 @@ function AllEscalations() {
       <PageHeader
         title="All escalations"
         guidance="Full history of escalations across every branch."
+        className="bg-slate-50/85 backdrop-blur-md"
       />
       <div className="space-y-4 p-6">
         <div className="flex flex-wrap items-center gap-2">
@@ -75,6 +79,7 @@ function AllEscalations() {
           <div className="relative ml-auto">
             <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
             <Input
+              name="escalation-search"
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search customer, reason…"
@@ -107,15 +112,31 @@ function AllEscalations() {
                     onClick={() => openDrawer(e.id)}
                   >
                     <Td>
-                      <div className="font-medium text-slate-900">{e.customer}</div>
-                      <div className="text-[11px] text-slate-400">{e.id}</div>
+                      <div className="flex min-w-[230px] items-center gap-3">
+                        <FacilityPhoto name={e.customer} size={38} className="rounded-full" />
+                        <div className="min-w-0">
+                          <div className="truncate font-medium text-slate-900">{e.customer}</div>
+                          <div className="text-[11px] text-slate-400">{e.id}</div>
+                        </div>
+                      </div>
                     </Td>
-                    <Td className="text-slate-700">{branch?.name}</Td>
+                    <Td className="text-slate-700">
+                      <span className="inline-flex min-w-[160px] items-center gap-2">
+                        <FacilityPhoto
+                          name={branch?.name ?? "Branch"}
+                          size={24}
+                          className="rounded-full"
+                        />
+                        <span>{branch?.name}</span>
+                      </span>
+                    </Td>
                     <Td>
                       <PriorityBadge priority={e.priority} />
                     </Td>
                     <Td className="max-w-[320px] truncate text-slate-600">
-                      {e.escalation?.reason}
+                      {e.escalation?.reason ? (
+                        <PersonMentionText text={e.escalation.reason} />
+                      ) : null}
                     </Td>
                     <Td>
                       <StatusPill status={e.status} />
@@ -124,14 +145,26 @@ function AllEscalations() {
                       <SlaCountdown dueAt={e.slaDueAt} />
                     </Td>
                     <Td className="tnum text-slate-600">{formatDate(e.escalation!.at)}</Td>
-                    <Td className="text-slate-700">{e.escalation?.by}</Td>
+                    <Td className="text-slate-700">
+                      <span className="inline-flex min-w-[150px] items-center gap-2">
+                        <AvatarInitials name={e.escalation?.by ?? "Dispatcher"} size={24} />
+                        <span>{e.escalation?.by}</span>
+                      </span>
+                    </Td>
                   </tr>
                 );
               })}
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-10 text-center text-sm text-slate-500">
-                    No escalations match your filters.
+                  <td colSpan={8} className="px-4 py-8">
+                    <EmptyState
+                      framed={false}
+                      illustration={emptyStateIllustrations.noSearchResults}
+                      artworkLabel="No escalations matched the current filters."
+                      message="No escalations match your filters."
+                      className="py-8"
+                      imageClassName="max-w-[620px]"
+                    />
                   </td>
                 </tr>
               ) : null}

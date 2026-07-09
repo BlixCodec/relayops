@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { MeridianLogo } from "@/components/relay/brand-logo";
 import { useRelayStore, branchById } from "@/lib/relay/store";
 
 export function WorkspaceContextBar() {
@@ -28,7 +29,7 @@ export function WorkspaceContextBar() {
 
   return (
     <div className="flex h-8 items-center overflow-x-auto px-5 text-[11px] text-slate-500">
-      <span className="font-medium text-slate-600">Meridian Field Services</span>
+      <MeridianLogo className="h-5 w-auto max-w-[160px]" />
       {sep}
       <span>{branch?.name ?? "All branches"} Branch</span>
       {sep}

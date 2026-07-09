@@ -5,6 +5,8 @@ import { useRelayStore, branchById, techById } from "@/lib/relay/store";
 import { PriorityBadge } from "./priority-badge";
 import { StatusPill } from "./status-pill";
 import { SlaCountdown } from "./sla-countdown";
+import { FacilityPhoto } from "./location-badge";
+import { PersonMention, PersonMentionText } from "./avatar-initials";
 import { RecommendationTree } from "./recommendation-tree";
 import { ActivityTracker } from "./drawer/activity-tracker";
 import { CompactDecisionBar } from "./drawer/compact-decision-bar";
@@ -31,7 +33,7 @@ export function ExceptionDrawer() {
       >
         {exception ? (
           <>
-            <SheetHeader className="space-y-0 border-b border-slate-100 px-6 py-4">
+            <SheetHeader className="sticky top-0 z-20 space-y-0 border-b border-slate-100 bg-white px-6 py-5 shadow-[0_1px_0_rgba(15,23,42,0.03)]">
               <div className="flex items-center gap-2 text-[12px] text-slate-500">
                 <span className="truncate">{branch?.name}</span>
                 <span className="text-slate-300">/</span>
@@ -66,17 +68,21 @@ export function ExceptionDrawer() {
                 </div>
               </div>
 
-              <SheetTitle className="mt-3 text-left text-[20px] font-semibold leading-tight tracking-tight text-slate-900">
-                {exception.customer}
-              </SheetTitle>
-              <p className="mt-1 text-left text-[12px] text-slate-500">{exception.issueType}</p>
-
-              <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                <PriorityBadge priority={exception.priority} />
-                <StatusPill status={exception.status} />
+              <div className="mt-4 flex items-start gap-3.5">
+                <FacilityPhoto name={exception.customer} size={52} className="rounded-full" />
+                <div className="min-w-0 flex-1">
+                  <SheetTitle className="text-left text-[20px] font-semibold leading-tight tracking-tight text-slate-900">
+                    {exception.customer}
+                  </SheetTitle>
+                  <p className="mt-1 text-left text-[12px] text-slate-500">{exception.issueType}</p>
+                  <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                    <PriorityBadge priority={exception.priority} />
+                    <StatusPill status={exception.status} />
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-slate-50 px-3 py-2 text-[11px] text-slate-500 ring-1 ring-slate-200/70">
                 <SlaCountdown dueAt={exception.slaDueAt} />
                 <span className="text-slate-300">·</span>
                 <span className="tnum">${exception.revenueAtRisk.toLocaleString()} at risk</span>
@@ -99,7 +105,7 @@ export function ExceptionDrawer() {
                   {exception.escalation && !exception.decision ? (
                     <div className="mt-2.5 rounded-md border-l-2 border-amber-400 bg-amber-50/60 px-3 py-2 text-xs text-slate-700">
                       <span className="font-medium text-amber-800">Escalation ask ·</span>{" "}
-                      {exception.escalation.reason}
+                      <PersonMentionText text={exception.escalation.reason} />
                     </div>
                   ) : null}
                   {exception.decision ? (
@@ -120,9 +126,11 @@ export function ExceptionDrawer() {
                         )}
                       >
                         {exception.decision.outcome === "approved" ? "Approved" : "Denied"} by{" "}
-                        {exception.decision.by} ·
+                        <PersonMention name={exception.decision.by} /> ·
                       </span>{" "}
-                      {exception.decision.note ?? "Decision returned to Dispatch."}
+                      <PersonMentionText
+                        text={exception.decision.note ?? "Decision returned to Dispatch."}
+                      />
                     </div>
                   ) : null}
                 </div>

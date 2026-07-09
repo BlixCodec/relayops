@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { PageHeader } from "@/components/relay/page-header";
 import { StatusPill } from "@/components/relay/status-pill";
+import { AvatarInitials } from "@/components/relay/avatar-initials";
+import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
+import { FacilityPhoto } from "@/components/relay/location-badge";
 import { useRelayStore, branchById } from "@/lib/relay/store";
 import type { Exception } from "@/lib/relay/types";
 
@@ -41,6 +44,7 @@ function Decisions() {
       <PageHeader
         title="Decisions"
         guidance="Every approval and denial, decision-maker on record."
+        className="bg-slate-50/85 backdrop-blur-md"
       />
       <div className="p-6">
         <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
@@ -61,12 +65,38 @@ function Decisions() {
                 return (
                   <tr key={e.id} className="hover:bg-slate-50">
                     <Td>
-                      <div className="font-medium text-slate-900">{decisionLabel(e)}</div>
-                      <div className="text-[11px] text-slate-400">{e.id}</div>
+                      <div className="flex min-w-[230px] items-center gap-3">
+                        <FacilityPhoto name={e.customer} size={38} className="rounded-full" />
+                        <div className="min-w-0">
+                          <div className="truncate font-medium text-slate-900">
+                            {decisionLabel(e)}
+                          </div>
+                          <div className="text-[11px] text-slate-400">{e.id}</div>
+                        </div>
+                      </div>
                     </Td>
-                    <Td className="text-slate-800">{e.customer}</Td>
-                    <Td className="text-slate-700">{branch?.name}</Td>
-                    <Td className="text-slate-700">{e.decision?.by}</Td>
+                    <Td className="text-slate-800">
+                      <span className="inline-flex min-w-[210px] items-center gap-2">
+                        <FacilityPhoto name={e.customer} size={24} className="rounded-full" />
+                        <span>{e.customer}</span>
+                      </span>
+                    </Td>
+                    <Td className="text-slate-700">
+                      <span className="inline-flex min-w-[150px] items-center gap-2">
+                        <FacilityPhoto
+                          name={branch?.name ?? "Branch"}
+                          size={24}
+                          className="rounded-full"
+                        />
+                        <span>{branch?.name}</span>
+                      </span>
+                    </Td>
+                    <Td className="text-slate-700">
+                      <span className="inline-flex min-w-[150px] items-center gap-2">
+                        <AvatarInitials name={e.decision?.by ?? "Manager"} size={24} />
+                        <span>{e.decision?.by}</span>
+                      </span>
+                    </Td>
                     <Td className="tnum text-slate-600">{formatDate(e.decision!.at)}</Td>
                     <Td>
                       <StatusPill
@@ -78,8 +108,15 @@ function Decisions() {
               })}
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
-                    No decisions have been recorded yet.
+                  <td colSpan={6} className="px-4 py-8">
+                    <EmptyState
+                      framed={false}
+                      illustration={emptyStateIllustrations.regionalOperationsClear}
+                      artworkLabel="No manager decisions have been recorded yet."
+                      message="No decisions have been recorded yet."
+                      className="py-8"
+                      imageClassName="max-w-[620px]"
+                    />
                   </td>
                 </tr>
               ) : null}

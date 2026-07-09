@@ -1,8 +1,8 @@
 # RelayOps — 40-second loop verification
 
-*Run: Wed 7/8, against commit `9a0b66b`, `next dev` (Turbopack), Chrome preview.
+_Run: Wed 7/8, against commit `9a0b66b`, `next dev` (Turbopack), Chrome preview.
 Driven end-to-end in the browser via scripted user interactions; latencies
-measured `performance.now()` from click to DOM update.*
+measured `performance.now()` from click to DOM update._
 
 ## Verdict
 
@@ -15,18 +15,18 @@ after is polish.
 
 ## Step-by-step results
 
-| # | Step (demo script) | Result | Latency |
-|---|---|---|---|
-| 1 | Cold start → pick **Dispatcher** | Workbench renders | 17 ms |
-| 2 | EX-1042 first in queue (SLA 42 min, red) | ✅ sorted by urgency | — |
-| 3 | Open EX-1042 | Drawer: meta grid, AI Insight (High), 2 audit entries | 60 ms |
-| 4 | Click **Escalate** | Dialog opens; Send disabled until type + reason filled | 40 ms |
-| 5 | Send escalation (overtime + reason) | "Waiting on Regional Operations" banner; actions hide | 30 ms |
-| 6 | **Switch role** (top bar) | Decision queue renders | 17 ms |
-| 7 | EX-1042 at top of queue | ✅ reason shown verbatim in quote block | 20 ms |
-| 8 | **Approve** with note | Row leaves queue (2 remain) | 18 ms |
-| 9 | **Switch role** back | Workbench renders | 17 ms |
-| 10 | EX-1042 card | "Approved — see note" pill; drawer shows decision block + full timeline | 62 ms |
+| #   | Step (demo script)                       | Result                                                                  | Latency |
+| --- | ---------------------------------------- | ----------------------------------------------------------------------- | ------- |
+| 1   | Cold start → pick **Dispatcher**         | Workbench renders                                                       | 17 ms   |
+| 2   | EX-1042 first in queue (SLA 42 min, red) | ✅ sorted by urgency                                                    | —       |
+| 3   | Open EX-1042                             | Drawer: meta grid, AI Insight (High), 2 audit entries                   | 60 ms   |
+| 4   | Click **Escalate**                       | Dialog opens; Send disabled until type + reason filled                  | 40 ms   |
+| 5   | Send escalation (overtime + reason)      | "Waiting on Regional Operations" banner; actions hide                   | 30 ms   |
+| 6   | **Switch role** (top bar)                | Decision queue renders                                                  | 17 ms   |
+| 7   | EX-1042 at top of queue                  | ✅ reason shown verbatim in quote block                                 | 20 ms   |
+| 8   | **Approve** with note                    | Row leaves queue (2 remain)                                             | 18 ms   |
+| 9   | **Switch role** back                     | Workbench renders                                                       | 17 ms   |
+| 10  | EX-1042 card                             | "Approved — see note" pill; drawer shows decision block + full timeline | 62 ms   |
 
 Final audit trail on EX-1042 (newest at bottom, reads as a story):
 
@@ -41,26 +41,26 @@ Final audit trail on EX-1042 (newest at bottom, reads as a story):
 
 Toasts fired with the hand-written microcopy at each mutation:
 
-- Escalate: *"Escalation sent to Regional Operations — a manager will review shortly."*
-- Approve: *"Approved — the branch will see your note on the exception."*
-- (Assign, verified in an earlier session: *"Marcus Reid is on it — added to the exception's timeline."*)
+- Escalate: _"Escalation sent to Regional Operations — a manager will review shortly."_
+- Approve: _"Approved — the branch will see your note on the exception."_
+- (Assign, verified in an earlier session: _"Marcus Reid is on it — added to the exception's timeline."_)
 
 ## Constraint compliance
 
-| Constraint (CLAUDE.md) | Status |
-|---|---|
+| Constraint (CLAUDE.md)          | Status                                                                                      |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
 | Exactly 4 screens, no nav items | ✅ single route; role select / workbench / decision queue / shared drawer, all state-driven |
-| No auth, DB, or API routes | ✅ `/data` JSON imported directly; React state only |
-| Light mode only | ✅ no `prefers-color-scheme` in `src/`; sonner pinned to light |
-| Tailwind defaults only | ✅ zero custom CSS values in components |
-| Stubs labeled, never hidden | ✅ role-select footnote; AI card carries "Rule-based stub…" line |
-| No placeholder text / lorem ipsum | ✅ all copy hand-written with next-steps |
-| "HVAC" nowhere | ✅ zero occurrences in app code, data, and UI copy (the word appears only inside the three docs that state the ban) |
-| Deny requires a note | ✅ submit disabled until instructions typed |
-| Three health pills, no charts | ✅ dot + label; open counts computed live from the store |
+| No auth, DB, or API routes      | ✅ `/data` JSON imported directly; React state only                                         |
+| Light mode only                 | ✅ no `prefers-color-scheme` in `src/`; sonner pinned to light                              |
+| Tailwind defaults only          | ✅ zero custom CSS values in components                                                     |
+| Stubs labeled, never hidden     | ✅ role-select footnote; AI card carries "Rule-based stub…" line                            |
+| No placeholder or filler text   | ✅ all copy hand-written with next-steps                                                    |
+| Banned trade acronym nowhere    | ✅ zero occurrences in app code, data, and UI copy                                          |
+| Deny requires a note            | ✅ submit disabled until instructions typed                                                 |
+| Three health pills, no charts   | ✅ dot + label; open counts computed live from the store                                    |
 
 Also verified along the way: queue sort 42→60→95→130→180→300→420→510→660 with
-resolved last; SLA red only *under* 60 (60 itself stays neutral); branch strip
+resolved last; SLA red only _under_ 60 (60 itself stays neutral); branch strip
 shows East at 2 open (live count) rather than the stale seeded 5.
 
 ## Observations & polish notes (not blockers)

@@ -31,7 +31,7 @@ instant, the app is done. Everything else is polish.
 
 ## Build order (one prompt per step, verify before moving on)
 
-1. **Scaffold + data.** Next.js/TS/Tailwind/shadcn. Generate `/data/*.json` first — branches, technicians, exceptions, activity log — to the North Ridge quality bar in the decision doc §6. Review the JSON yourself before any UI exists. Bad data poisons every screen after it.
+1. **Scaffold + data.** TanStack Start/TS/Tailwind/shadcn. Generate `/data/*.json` first — branches, technicians, exceptions, activity log — to the North Ridge quality bar in the decision doc §6. Review the JSON yourself before any UI exists. Bad data poisons every screen after it.
 2. **State + role switching.** Single store (Context or Zustand), role switch in top bar, state survives switching. Test this alone.
 3. **Dispatcher workbench** — queue, drawer, Assign, Escalate.
 4. **Manager decision queue** — escalation rows, Approve/Deny with note, three health pills.

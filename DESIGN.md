@@ -22,17 +22,17 @@ The three Attio signatures:
 
 All values are Tailwind defaults — zero custom CSS values.
 
-| Role | Value |
-|---|---|
-| Background | `slate-50` |
-| Surface (cards) | `white`, border `slate-200` |
-| Text primary | `slate-900` |
-| Text secondary | `slate-500` |
-| Accent (links, active nav, focus) | `indigo-600`, hover `indigo-700` |
-| Critical | `red-600` text, `red-50` bg, `red-200` border |
-| Warning / High load | `amber-600` text, `amber-50` bg |
-| Stable / Resolved | `emerald-600` text, `emerald-50` bg |
-| AI Insight surface | `violet-50` bg, `violet-200` border, `violet-700` label |
+| Role                              | Value                                                   |
+| --------------------------------- | ------------------------------------------------------- |
+| Background                        | `slate-50`                                              |
+| Surface (cards)                   | `white`, border `slate-200`                             |
+| Text primary                      | `slate-900`                                             |
+| Text secondary                    | `slate-500`                                             |
+| Accent (links, active nav, focus) | `indigo-600`, hover `indigo-700`                        |
+| Critical                          | `red-600` text, `red-50` bg, `red-200` border           |
+| Warning / High load               | `amber-600` text, `amber-50` bg                         |
+| Stable / Resolved                 | `emerald-600` text, `emerald-50` bg                     |
+| AI Insight surface                | `violet-50` bg, `violet-200` border, `violet-700` label |
 
 One accent color (indigo). Everything else is neutral + semantic status.
 
@@ -90,4 +90,4 @@ subtle, fast, functional; respect `prefers-reduced-motion`.
 - Custom CSS values outside Tailwind defaults
 - New screens, pages, or nav items (exactly four screens)
 - Charts of any kind; dark mode; gradients; glassmorphism
-- Placeholder copy; unlabeled stubs; the word "HVAC"
+- Placeholder copy; unlabeled stubs; banned trade acronym
