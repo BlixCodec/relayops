@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AvatarInitials } from "@/components/relay/avatar-initials";
 import { BrandLockup, MeridianLogo } from "@/components/relay/brand-logo";
 import { FacilityPhoto } from "@/components/relay/location-badge";
+import { ProductGuide, WorkflowOverview } from "@/components/relay/product-guide";
 import { useRelayStore } from "@/lib/relay/store";
 import { branches } from "@/lib/relay/seed";
 
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/")({
 function RoleSelect() {
   const { currentUser, exceptions, setRole } = useRelayStore();
   const navigate = useNavigate();
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const metrics = useMemo(() => {
     const active = exceptions.filter((e) => !["resolved", "denied", "approved"].includes(e.status));
@@ -77,6 +79,8 @@ function RoleSelect() {
             <p className="text-center text-[11px] text-slate-500">
               Stubbed role login for evaluation · no authentication by design
             </p>
+
+            <WorkflowOverview onOpenGuide={() => setGuideOpen(true)} />
           </div>
         </section>
 
@@ -112,6 +116,7 @@ function RoleSelect() {
         <MeridianLogo className="h-5 w-auto max-w-[150px]" />
         <span>Meridian Field Services · connected prototype workspace</span>
       </footer>
+      <ProductGuide open={guideOpen} onOpenChange={setGuideOpen} />
     </div>
   );
 }

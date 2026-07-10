@@ -41,6 +41,7 @@ interface RelayState {
   resolve: (id: string, note?: string) => void;
   addNote: (id: string, note: string) => void;
   toggleFavorite: (id: string) => void;
+  resetDemo: () => void;
 }
 
 const iso = () => new Date().toISOString();
@@ -337,6 +338,20 @@ export const useRelayStore = create<RelayState>()(
           }),
         }));
       },
+
+      resetDemo: () =>
+        set({
+          role: "dispatcher",
+          activeBranchId: workspace.defaultBranch,
+          currentUser: { dispatcher: "Alicia Monroe", manager: "Renata Voss" },
+          exceptions: initialExceptions,
+          decisionHistory: initialDecisionHistory,
+          notifications: initialNotifications,
+          drawerExceptionId: null,
+          notificationsOpen: false,
+          commandOpen: false,
+          collapsedCards: {},
+        }),
     }),
     {
       name: "relay-ui",

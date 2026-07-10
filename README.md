@@ -66,9 +66,10 @@ stubbed were defined before implementation.
 ## Prototype behavior
 
 State persists in browser `localStorage`, including role, exception decisions,
-notifications, and favorites. A fresh browser profile or private window starts
-from the reviewed seed data. No external APIs, paid services, or model calls are
-required to run the prototype.
+notifications, and favorites. The in-app **How RelayOps works** guide includes a
+confirmed **Reset demo data** action that restores the reviewed seed state. A
+fresh browser profile or private window also starts from that state. No external
+APIs, paid services, or model calls are required to run the prototype.
 
 ## Stack
 
