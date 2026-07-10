@@ -1,4 +1,4 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import {
   ClipboardList,
   FileCheck2,
@@ -54,9 +54,7 @@ const managerNav = [
 
 export function AppSidebar() {
   const currentPath = useRouterState({ select: (r) => r.location.pathname });
-  const navigate = useNavigate();
-  const { exceptions, openDrawer, toggleFavorite, activeBranchId, setBranch, setFavoriteFilter } =
-    useRelayStore();
+  const { exceptions, openDrawer, toggleFavorite, activeBranchId, setBranch } = useRelayStore();
 
   const isActive = (to: string) => {
     if (to === "/dispatcher" || to === "/manager") return currentPath === to;
@@ -83,23 +81,28 @@ export function AppSidebar() {
             aria-label="Toggle sidebar"
           />
         </div>
-        <div className="group-data-[collapsible=icon]:hidden">
-          <Select value={activeBranchId} onValueChange={setBranch}>
-            <SelectTrigger className="h-8 w-full border-slate-200 bg-slate-50 text-[12px] font-medium text-slate-700">
-              <SelectValue placeholder="Branch" />
-            </SelectTrigger>
-            <SelectContent>
-              {branches.map((b) => (
-                <SelectItem key={b.id} value={b.id} className="text-[12px]">
-                  {b.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {currentPath === "/dispatcher/today" ? (
+          <div className="group-data-[collapsible=icon]:hidden">
+            <Select value={activeBranchId} onValueChange={setBranch}>
+              <SelectTrigger
+                aria-label="Active dispatcher branch"
+                className="h-8 w-full border-slate-200 bg-slate-50 text-[12px] font-medium text-slate-700"
+              >
+                <SelectValue placeholder="Branch" />
+              </SelectTrigger>
+              <SelectContent>
+                {branches.map((b) => (
+                  <SelectItem key={b.id} value={b.id} className="text-[12px]">
+                    {b.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : null}
       </SidebarHeader>
 
-      <SidebarContent className="gap-0 px-2 py-2 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
+      <SidebarContent className="gap-0 overflow-x-hidden px-2 py-2 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
         <SidebarGroup className="group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:py-2">
           <SidebarGroupLabel className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
             {navLabel}
@@ -128,14 +131,8 @@ export function AppSidebar() {
                   <SidebarMenuItem key={ex.id}>
                     <div className="group/fav relative flex items-center gap-1 py-0.5 before:absolute before:left-[17px] before:top-1/2 before:h-3 before:w-4 before:-translate-y-3 before:rounded-bl-lg before:border-b before:border-l before:border-slate-200">
                       <SidebarMenuButton
-                        onClick={() => {
-                          setFavoriteFilter(ex.branchId);
-                          navigate({
-                            to: effectiveRole === "dispatcher" ? "/dispatcher" : "/manager",
-                          });
-                        }}
-                        onDoubleClick={() => openDrawer(ex.id)}
-                        title="Click to filter · double-click to open"
+                        onClick={() => openDrawer(ex.id)}
+                        title={`Open ${ex.customer}`}
                         className="relative z-10 ml-5 h-9 flex-1 gap-2 rounded-lg px-1.5 text-[13px] text-slate-700 hover:bg-slate-100"
                       >
                         <FacilityPhoto name={ex.customer} size={22} className="rounded-full" />

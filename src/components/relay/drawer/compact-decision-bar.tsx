@@ -14,7 +14,9 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { AvatarInitials } from "../avatar-initials";
+import { DenyDialog } from "../deny-dialog";
 import { useRelayStore, technicians } from "@/lib/relay/store";
+import { managerApprovalCopy } from "@/lib/relay/decision-copy";
 import type { Exception } from "@/lib/relay/types";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +39,7 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "inline-flex h-9 w-full min-w-0 items-center justify-center gap-1.5 rounded-lg border px-3 text-[12.5px] font-medium transition-colors",
+        "inline-flex h-11 w-full min-w-0 items-center justify-center gap-1.5 rounded-lg border px-3 text-[12.5px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
         tone === "escalate"
           ? "border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100"
           : tone === "success"
@@ -52,7 +54,7 @@ function ActionButton({
   );
 }
 
-// Simulated "improve with AI" transform (no external calls).
+// Labeled prototype rewrite transform; no external model call is made.
 function improveNote(input: string): string {
   const t = input.trim().replace(/\s+/g, " ");
   if (t.length === 0) return "";
@@ -62,15 +64,17 @@ function improveNote(input: string): string {
 }
 
 export function CompactDecisionBar({ exception }: { exception: Exception }) {
-  const { escalate, assignTechnician, resolve, addNote } = useRelayStore();
+  const { role, escalate, approve, assignTechnician, resolve, addNote } = useRelayStore();
   const [note, setNote] = useState("");
   const [expanded, setExpanded] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [escalateReason, setEscalateReason] = useState("");
   const [improving, setImproving] = useState(false);
 
-  const canEscalate = exception.status !== "escalated" && exception.status !== "resolved";
-  const canResolve = exception.status !== "resolved";
+  const canAssign = ["open", "assigned", "approved", "denied"].includes(exception.status);
+  const canEscalate = ["open", "assigned", "denied"].includes(exception.status);
+  const canResolve = ["open", "assigned", "approved", "denied"].includes(exception.status);
+  const approval = managerApprovalCopy(exception);
 
   const submitNote = () => {
     if (note.trim().length === 0) return;
@@ -82,7 +86,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
 
   const runImprove = () => {
     if (note.trim().length === 0) {
-      toast("Add a draft comment before improving it.");
+      toast("Add a draft comment before polishing it.");
       return;
     }
     setImproving(true);
@@ -90,107 +94,144 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
     setTimeout(() => {
       setNote(improveNote(note));
       setImproving(false);
-      toast("Comment rewritten for clarity.");
+      toast("Draft polished for clarity — prototype behavior only.");
     }, 550);
   };
 
   return (
     <section className="border-t border-slate-200 bg-white px-3 py-3">
-      <div className="grid grid-cols-3 gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <div className="min-w-0">
-              <ActionButton icon={UserPlus} label="Assign" />
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-64 p-2" align="start">
-            <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-slate-400">
-              Available technicians
-            </div>
-            <div className="mt-1 space-y-0.5">
-              {technicians.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => {
-                    assignTechnician(exception.id, t.id);
-                    toast(`${t.name} is assigned to ${exception.customer}.`);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-slate-50"
-                >
-                  <AvatarInitials name={t.name} size={22} />
-                  <span className="flex-1 truncate font-medium text-slate-800">{t.name}</span>
-                  <span className="tnum text-[11px] text-slate-500">{t.minutesAway}m</span>
-                </button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
-
-        <Dialog open={escalateOpen} onOpenChange={setEscalateOpen}>
-          <DialogTrigger asChild>
-            <div className="min-w-0">
-              <ActionButton
-                icon={ArrowUpRight}
-                label="Escalate"
-                tone="escalate"
-                disabled={!canEscalate}
-              />
-            </div>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Escalate to Regional Operations</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-2">
-              <Label htmlFor="reason" className="text-xs text-slate-600">
-                What decision do you need?
-              </Label>
-              <Textarea
-                id="reason"
-                name="escalation-reason"
-                value={escalateReason}
-                onChange={(e) => setEscalateReason(e.target.value)}
-                placeholder="Requesting approval to authorize cross-branch transfer of Lena Kowalski from Southbrook."
-                rows={4}
-              />
-            </div>
-            <DialogFooter>
-              <Button
-                variant="ghost"
-                onClick={() => setEscalateOpen(false)}
-                className="text-slate-600"
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={escalateReason.trim().length < 5}
-                onClick={() => {
-                  escalate(exception.id, escalateReason.trim());
-                  setEscalateOpen(false);
-                  setEscalateReason("");
-                  toast("Regional Operations has been notified.");
-                }}
-              >
-                Send escalation
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <div className="min-w-0">
-          <ActionButton
-            icon={Check}
-            label="Resolve"
-            tone="success"
-            disabled={!canResolve}
-            onClick={() => {
-              resolve(exception.id);
-              toast(`${exception.customer} marked resolved.`);
-            }}
-          />
+      {role === "manager" ? (
+        exception.status === "escalated" ? (
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              className="h-11 rounded-lg bg-slate-900 text-sm text-white hover:bg-slate-800"
+              onClick={() => {
+                approve(exception.id, approval.note);
+                toast(approval.toast);
+              }}
+            >
+              Approve escalation
+            </Button>
+            <DenyDialog
+              exceptionId={exception.id}
+              customer={exception.customer}
+              trigger={
+                <Button variant="outline" className="h-11 rounded-lg border-slate-200">
+                  Deny with instruction
+                </Button>
+              }
+            />
+          </div>
+        ) : (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-[12px] text-slate-600">
+            This decision has returned to Dispatch. The activity trail remains available for review.
+          </div>
+        )
+      ) : exception.status === "escalated" ? (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12px] text-amber-900">
+          Waiting on Regional Operations. You can add context below while a manager reviews the
+          request.
         </div>
-      </div>
+      ) : exception.status === "resolved" ? (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[12px] text-emerald-900">
+          This exception is resolved. Its activity trail is preserved for review.
+        </div>
+      ) : (
+        <div className={cn("grid gap-2", canEscalate ? "grid-cols-3" : "grid-cols-2")}>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="min-w-0">
+                <ActionButton icon={UserPlus} label="Assign" disabled={!canAssign} />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2" align="start">
+              <div className="px-2 py-1 text-[11px] font-medium text-slate-500">
+                Available technicians
+              </div>
+              <div className="mt-1 space-y-0.5">
+                {technicians.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      assignTechnician(exception.id, t.id);
+                      toast(`${t.name} is assigned to ${exception.customer}.`);
+                    }}
+                    className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  >
+                    <AvatarInitials name={t.name} size={22} />
+                    <span className="flex-1 truncate font-medium text-slate-800">{t.name}</span>
+                    <span className="tnum text-[11px] text-slate-500">{t.minutesAway}m</span>
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {canEscalate ? (
+            <Dialog open={escalateOpen} onOpenChange={setEscalateOpen}>
+              <DialogTrigger asChild>
+                <div className="min-w-0">
+                  <ActionButton icon={ArrowUpRight} label="Escalate" tone="escalate" />
+                </div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Escalate to Regional Operations</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-2">
+                  <Label htmlFor="reason" className="text-xs text-slate-600">
+                    What decision do you need?
+                  </Label>
+                  <Textarea
+                    id="reason"
+                    name="escalation-reason"
+                    value={escalateReason}
+                    onChange={(e) => setEscalateReason(e.target.value)}
+                    placeholder="Describe the approval needed, the constraint, and the requested next step."
+                    rows={4}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setEscalateOpen(false)}
+                    className="text-slate-600"
+                  >
+                    Keep editing
+                  </Button>
+                  <Button
+                    disabled={escalateReason.trim().length < 5}
+                    onClick={() => {
+                      escalate(exception.id, escalateReason.trim());
+                      setEscalateOpen(false);
+                      setEscalateReason("");
+                      toast(
+                        "Escalation sent to Regional Operations — a manager will review shortly.",
+                      );
+                    }}
+                  >
+                    Send escalation
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          ) : null}
+
+          <div className="min-w-0">
+            <ActionButton
+              icon={Check}
+              label="Resolve"
+              tone="success"
+              disabled={!canResolve}
+              onClick={() => {
+                resolve(exception.id);
+                toast(`${exception.customer} marked resolved.`);
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="mt-3 rounded-lg border border-slate-200 bg-white focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400">
         <div className="flex items-start gap-1.5">
@@ -240,7 +281,7 @@ export function CompactDecisionBar({ exception }: { exception: Exception }) {
               ) : (
                 <Sparkles className="h-3 w-3" strokeWidth={2} />
               )}
-              {improving ? "Rewriting…" : "Improve with AI"}
+              {improving ? "Polishing…" : "Polish draft"}
             </button>
             <span className="text-[10px] text-slate-400">⌘↵ to send</span>
           </div>

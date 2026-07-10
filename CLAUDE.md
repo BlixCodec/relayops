@@ -1,37 +1,33 @@
 # RelayOps — build rules
 
-Read docs/decision-doc.md and docs/design-spec.md before any change. They are
-the source of truth. If a request conflicts with them, flag it instead of
-complying.
+Read `PRODUCT.md`, `DESIGN.md`, and `docs/decision-doc.md` before changing the
+product. The closed-loop decision workflow is the source of truth; supporting
+routes must never obscure it.
 
-## Hard constraints
+## Product constraints
 
-- Exactly 4 screens: role select, dispatcher workbench, manager decision queue,
-  shared exception detail drawer. Never add a screen, page, or nav item.
-- No auth, no database, no API routes. Local JSON in /data, React state only.
-- Light mode only. No theme toggle. No gradients, glassmorphism, or charts.
-- Every visual value must come from docs/design-spec.md tokens (Tailwind
-  defaults only — zero custom CSS values).
-- Stubs are labeled in the UI as deliberate ("stubbed — see notes"), never
-  hidden.
-- All copy is hand-written per the microcopy rules in the design spec. No
-  placeholder text or filler copy ever. The banned trade acronym must not appear
-  anywhere in this repo.
+- Two stubbed roles only: Dispatcher and Operations Manager. No real authentication.
+- Local reviewed seed data and browser-local prototype persistence. No database or paid API.
+- Role permissions and exception state transitions must be enforced in both UI and store.
+- Light mode only. No charts, dark mode, decorative gradients, or glass effects.
+- Recommendations are rule-based prototype behavior and must be labeled honestly.
+- Stubs are disclosed in the interface or README; no placeholder or filler copy.
+- The banned trade acronym must not appear in app code, data, or user-facing copy.
 
-## Definition of done — the 40-second loop
+## Definition of done
 
-Dispatcher opens the North Ridge exception → Escalate → switch role → Manager
-sees it in the decision queue → Approve with note → switch back → Dispatcher's
-card shows the decision + updated audit timeline.
+Dispatcher opens North Ridge Medical Center → escalates a specific decision →
+switches to Regional Operations → manager approves or denies with instructions →
+switches back → Dispatch sees the returned decision and updated activity trail.
 
-If that loop works and feels instant, the app is done. Everything else is
-polish.
+That loop must remain fast, keyboard accessible, role-correct, and reproducible.
+The additional Today, history, assignment, and escalation views support the loop;
+they are not the submission story.
 
-## Build order (do not reorder)
+## Technical expectations
 
-1. Data — /data JSON is already seeded; wire it up, review before building UI
-2. State + role switching (single store, state survives switching)
-3. Dispatcher workbench (queue, drawer, Assign, Escalate)
-4. Manager decision queue (Approve/Deny with note, three health pills)
-5. Close the loop (decisions flow back, audit timeline, toasts) — run the demo
-6. Polish only after 5: empty states, microcopy, AI Insight cards, spacing
+- `npm run build`, `npm run lint`, and `npx tsc --noEmit` must pass before handoff.
+- SSR and client output must hydrate without console errors.
+- All animation must respect `prefers-reduced-motion`.
+- Interactive table rows need keyboard behavior and visible focus.
+- Preserve published git history; never force-push or rewrite synced Lovable commits.

@@ -108,8 +108,16 @@ function AllEscalations() {
                 return (
                   <tr
                     key={e.id}
-                    className="cursor-pointer hover:bg-slate-50"
+                    tabIndex={0}
+                    aria-label={`Open ${e.customer} escalation`}
+                    className="cursor-pointer hover:bg-slate-50 focus:outline-none focus-visible:bg-indigo-50/50 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
                     onClick={() => openDrawer(e.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openDrawer(e.id);
+                      }
+                    }}
                   >
                     <Td>
                       <div className="flex min-w-[230px] items-center gap-3">
@@ -144,7 +152,9 @@ function AllEscalations() {
                     <Td>
                       <SlaCountdown dueAt={e.slaDueAt} />
                     </Td>
-                    <Td className="tnum text-slate-600">{formatDate(e.escalation!.at)}</Td>
+                    <Td className="tnum text-slate-600">
+                      <span suppressHydrationWarning>{formatDate(e.escalation!.at)}</span>
+                    </Td>
                     <Td className="text-slate-700">
                       <span className="inline-flex min-w-[150px] items-center gap-2">
                         <AvatarInitials name={e.escalation?.by ?? "Dispatcher"} size={24} />

@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { X } from "lucide-react";
 import { PageHeader } from "@/components/relay/page-header";
 import { ExceptionCard } from "@/components/relay/exception-card";
 import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useRelayStore, branchById } from "@/lib/relay/store";
+import { useRelayStore } from "@/lib/relay/store";
 import { SlaLegend, slaBucket } from "@/components/relay/sla-countdown";
 
 export const Route = createFileRoute("/_app/dispatcher/")({
@@ -14,16 +13,7 @@ export const Route = createFileRoute("/_app/dispatcher/")({
 
 function DispatcherWorkbench() {
   const exceptions = useRelayStore((s) => s.exceptions);
-  const favoriteFilter = useRelayStore((s) => s.favoriteFilter);
-  const setFavoriteFilter = useRelayStore((s) => s.setFavoriteFilter);
-  const filteredBranch = branchById(favoriteFilter ?? "");
-
-  const scoped = useMemo(
-    () => (favoriteFilter ? exceptions.filter((e) => e.branchId === favoriteFilter) : exceptions),
-    [exceptions, favoriteFilter],
-  );
-
-  const active = useMemo(() => scoped.filter((e) => e.status !== "resolved"), [scoped]);
+  const active = useMemo(() => exceptions.filter((e) => e.status !== "resolved"), [exceptions]);
 
   const criticalOpen = useMemo(
     () =>
@@ -62,7 +52,9 @@ function DispatcherWorkbench() {
   const headline =
     criticalOpen === 0
       ? "No critical exceptions open right now."
-      : `${criticalOpen} critical exception${criticalOpen === 1 ? "" : "s"} require attention today.`;
+      : `${criticalOpen} critical exception${criticalOpen === 1 ? "" : "s"} ${
+          criticalOpen === 1 ? "requires" : "require"
+        } attention today.`;
 
   return (
     <>
@@ -75,23 +67,6 @@ function DispatcherWorkbench() {
           <QueuePulse overdue={overdueCount} under60={under60Count} active={active.length} />
         }
       />
-
-      {favoriteFilter && filteredBranch ? (
-        <div className="border-b border-slate-100 bg-indigo-50/40 px-4 py-2 sm:px-6">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-indigo-200">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-            Filtered by {filteredBranch.name}
-            <button
-              type="button"
-              onClick={() => setFavoriteFilter(null)}
-              aria-label="Clear filter"
-              className="ml-1 rounded-full p-0.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </div>
-        </div>
-      ) : null}
 
       <div className="p-4 sm:p-6">
         {visibleGroups.length === 0 ? (

@@ -8,7 +8,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
-import { useRelayStore } from "@/lib/relay/store";
+import { branchById, techById, useRelayStore } from "@/lib/relay/store";
 
 export function CommandSearch() {
   const { commandOpen, toggleCommand, exceptions, openDrawer } = useRelayStore();
@@ -41,7 +41,9 @@ export function CommandSearch() {
           {exceptions.slice(0, 8).map((e) => (
             <CommandItem
               key={e.id}
-              value={`${e.id} ${e.customer} ${e.issueType}`}
+              value={`${e.id} ${e.customer} ${e.issueType} ${branchById(e.branchId)?.name ?? ""} ${
+                techById(e.assignedTech)?.name ?? ""
+              }`}
               onSelect={() => {
                 openDrawer(e.id);
                 toggleCommand(false);

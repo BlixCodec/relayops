@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import {
@@ -24,6 +24,10 @@ export function RoleSwitchDialog({
   const { role, setRole, currentUser } = useRelayStore();
   const navigate = useNavigate();
   const [pending, setPending] = useState<Role>(role);
+
+  useEffect(() => {
+    if (open) setPending(role);
+  }, [open, role]);
 
   const options: { role: Role; name: string; title: string; blurb: string }[] = [
     {

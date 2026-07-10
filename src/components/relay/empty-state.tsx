@@ -47,6 +47,8 @@ export function EmptyState({
             src={illustration}
             alt={artworkLabel ?? ""}
             aria-hidden={artworkLabel ? undefined : true}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-contain"
           />
         </div>

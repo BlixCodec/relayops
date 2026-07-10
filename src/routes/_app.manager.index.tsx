@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { X } from "lucide-react";
 import { PageHeader } from "@/components/relay/page-header";
 import { BranchHealthStrip } from "@/components/relay/branch-health-strip";
 import { DecisionRow } from "@/components/relay/decision-row";
 import { EmptyState, emptyStateIllustrations } from "@/components/relay/empty-state";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useRelayStore, branchById } from "@/lib/relay/store";
+import { useRelayStore } from "@/lib/relay/store";
 import { slaBucket } from "@/components/relay/sla-countdown";
 
 export const Route = createFileRoute("/_app/manager/")({
@@ -15,16 +14,7 @@ export const Route = createFileRoute("/_app/manager/")({
 
 function DecisionQueue() {
   const exceptions = useRelayStore((s) => s.exceptions);
-  const favoriteFilter = useRelayStore((s) => s.favoriteFilter);
-  const setFavoriteFilter = useRelayStore((s) => s.setFavoriteFilter);
-  const filteredBranch = branchById(favoriteFilter ?? "");
-
-  const scoped = useMemo(
-    () => (favoriteFilter ? exceptions.filter((e) => e.branchId === favoriteFilter) : exceptions),
-    [exceptions, favoriteFilter],
-  );
-
-  const pending = useMemo(() => scoped.filter((e) => e.status === "escalated"), [scoped]);
+  const pending = useMemo(() => exceptions.filter((e) => e.status === "escalated"), [exceptions]);
   const overdueCount = pending.filter((e) => slaBucket(e.slaDueAt) === "overdue").length;
   const criticalCount = pending.filter((e) => e.priority === "critical").length;
   const branchCount = new Set(pending.map((e) => e.branchId)).size;
@@ -52,23 +42,6 @@ function DecisionQueue() {
           />
         }
       />
-
-      {favoriteFilter && filteredBranch ? (
-        <div className="border-b border-slate-100 bg-indigo-50/40 px-4 py-2 sm:px-6">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700 ring-1 ring-indigo-200">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-            Filtered by {filteredBranch.name}
-            <button
-              type="button"
-              onClick={() => setFavoriteFilter(null)}
-              aria-label="Clear filter"
-              className="ml-1 rounded-full p-0.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </div>
-        </div>
-      ) : null}
 
       <div className="space-y-5 p-4 sm:p-6">
         <BranchHealthStrip />
@@ -108,7 +81,7 @@ function DecisionPulse({
         <button
           type="button"
           className="inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 shadow-card transition-colors hover:bg-slate-50"
-          aria-label={`${pending} pending decisions, ${critical} critical, ${overdue} overdue, ${branches} branches affected`}
+          aria-label={`${pending} pending decision${pending === 1 ? "" : "s"}, ${critical} critical, ${overdue} overdue, ${branches} branch${branches === 1 ? "" : "es"} affected`}
         >
           <span className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">

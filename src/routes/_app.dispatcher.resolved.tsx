@@ -63,8 +63,16 @@ function Resolved() {
                 return (
                   <tr
                     key={e.id}
+                    tabIndex={0}
+                    aria-label={`Open resolved exception for ${e.customer}`}
                     onClick={() => openDrawer(e.id)}
-                    className="cursor-pointer transition-colors hover:bg-slate-50/80"
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openDrawer(e.id);
+                      }
+                    }}
+                    className="cursor-pointer transition-colors hover:bg-slate-50/80 focus:outline-none focus-visible:bg-indigo-50/50 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
                   >
                     <Td>
                       <div className="flex items-center gap-3">
@@ -95,7 +103,9 @@ function Resolved() {
                     </Td>
                     <Td className="tnum text-[13px] leading-snug text-slate-600">
                       <span suppressHydrationWarning>
-                        {formatDate(resolvedAudit?.at ?? e.createdAt)}
+                        <span suppressHydrationWarning>
+                          {formatDate(resolvedAudit?.at ?? e.createdAt)}
+                        </span>
                       </span>
                     </Td>
                     <Td className="text-[13px] text-slate-700">

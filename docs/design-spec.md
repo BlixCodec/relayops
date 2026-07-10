@@ -1,52 +1,74 @@
-# RelayOps — Design Spec (one page, final)
+# RelayOps — Implementation Design Spec
 
-**Direction: Attio-style.** Calm enterprise ops tooling — soft neutrals, generous whitespace, small refined type, borders over shadows. Not Dribbble-glossy. If a choice makes it feel like a landing page, it's wrong; if it makes it feel like software a dispatcher lives in for 8 hours, it's right.
+`DESIGN.md` is the canonical design-system document. This file records the
+implementation-level rules used during submission QA.
 
-**Attio calibration (the three signatures):**
-- Primary action buttons are dark neutral (`slate-900` bg, white text, hover `slate-800`) — not colored. Indigo is reserved for links, active nav, and focus states only.
-- Soft gray hover states on every clickable row/card (`hover:bg-slate-50`).
-- Pills and badges use tinted backgrounds with darker text of the same hue — never solid fills.
+## Direction
 
-## Hard rules
+Calm enterprise operations software: slate canvas, white work surfaces, Geist,
+compact hierarchy, semantic tinted states, borders over shadows, and immediate
+feedback. The interface should disappear into the operational task.
 
-- Light mode only. No theme toggle (scope).
-- No gradients, no glassmorphism, no hero sections, no illustrations.
-- Borders over shadows: `border-slate-200`, shadow only on the detail drawer and toasts.
-- One accent color. Everything else is neutral + semantic status.
-- Every color/spacing value comes from Tailwind defaults — zero custom CSS values.
+## Shell
 
-## Tokens
+- Desktop uses collapsible role navigation and a pinned top bar.
+- Mobile uses a compact top bar and bottom navigation.
+- Branch selection appears only on Dispatcher Today.
+- Favorites open saved exceptions directly.
+- Role switching clears transient drawers and controls while preserving the workflow state.
 
-| Role | Value |
-|---|---|
-| Background | `slate-50` |
-| Surface (cards) | `white`, border `slate-200`, `rounded-lg` |
-| Text primary / secondary | `slate-900` / `slate-500` |
-| Accent (actions, links, active nav) | `indigo-600`, hover `indigo-700` |
-| Critical | `red-600` text, `red-50` bg, `red-200` border |
-| Warning / High load | `amber-600` text, `amber-50` bg |
-| Stable / Resolved | `emerald-600` text, `emerald-50` bg |
-| AI Insight surface | `violet-50` bg, `violet-200` border, violet-700 label |
-| Font | Inter (or Geist), `text-sm` base; page titles `text-lg font-semibold` — nothing bigger |
-| Numbers (SLA timers, $) | `tabular-nums font-medium` |
-| Spacing | 8px grid: `p-4` cards, `gap-3` lists, `p-6` page gutter |
-| Radius | `rounded-lg` cards, `rounded-full` pills/badges |
+## Decision hierarchy
 
-## Components (all shadcn/ui primitives, styled with tokens above)
+### Dispatcher
 
-- **App shell:** slim top bar — product name left, role badge + "Switch role" right. No sidebar (4 screens don't need one).
-- **Exception card:** priority badge + customer name (semibold) → issue one-liner (secondary) → footer row: SLA countdown (tabular, turns red under 60 min) · branch · revenue at risk. Entire card clickable → drawer.
-- **Priority badge:** pill, semantic colors. Critical / High / Medium.
-- **Status pill (branch health):** dot + label. `● Stable` `● High load` `● Critical`. Exactly three, no charts.
-- **AI Insight card:** violet surface, small "AI SUGGESTION" label, bold recommended action, 3–4 reasoning bullets, confidence tag. Visually distinct from everything else — it should read as "the platform thought about this."
-- **Audit timeline:** vertical line, dot per event, `time + actor + action`. Newest at bottom (reads like a story).
-- **Decision queue row (manager):** exception summary left, dispatcher's escalation reason in a quote block, Approve (indigo) / Deny (ghost) right. Deny requires a note.
-- **Toast:** bottom-right, icon + sentence with a next-step ("Escalation sent to Regional Operations — a manager will review shortly.").
-- **Empty states:** one icon, one sentence, one suggested action. Written, not defaulted. ("No escalations waiting. Nice — check branch health below.")
-- **Role select:** two cards centered, role name + one-line description of what this role decides + stub disclosure footnote.
+1. SLA urgency and customer risk.
+2. Recommended next action.
+3. Assign, escalate, or resolve according to current state.
+4. Supporting activity and business context.
 
-## Interaction rules
+### Operations Manager
 
-- Role switch is instant (top-bar), state persists — this is what makes the closed-loop demo land.
-- Optimistic updates, no artificial spinners; data is local anyway.
-- Escalate/Approve/Deny each: update state → append audit event → toast. Same pattern, three actions, zero surprises.
+1. Dispatcher request.
+2. Approve or deny.
+3. Expandable recommendation reasoning.
+4. Branch health and historical context.
+
+## State transitions
+
+| Current state   | Dispatcher actions                     | Manager actions            |
+| --------------- | -------------------------------------- | -------------------------- |
+| Open / Assigned | Assign, Escalate, Resolve              | Read only                  |
+| Escalated       | Add context while waiting              | Approve, Deny, add context |
+| Approved        | Assign/proceed, Resolve                | Read only                  |
+| Denied          | Assign/rework, Escalate again, Resolve | Read only                  |
+| Resolved        | Read only                              | Read only                  |
+
+The Zustand store rejects the same invalid transitions that the UI hides.
+
+## Recommendation disclosure
+
+The recommendation tree is a **rule-based prototype**, not a live model result.
+Its visible evidence is Issue → Impact → Timeline → Recommended. On the manager
+queue, detailed reasoning is collapsed until requested so decision controls stay
+inside the first viewport.
+
+## Accessibility and motion
+
+- All controls have visible focus.
+- Clickable table rows support Enter and Space.
+- Status always includes a text label.
+- Meaningful secondary text uses slate-500 or darker on white.
+- `prefers-reduced-motion` reduces animation and transition duration globally.
+- Server/client time strings use hydration-safe rendering.
+
+## Feedback copy
+
+- Escalate: “Escalation sent to Regional Operations — a manager will review shortly.”
+- Approve: identify who can proceed or that Dispatch has instructions.
+- Deny: require and return a specific instruction.
+- Resolve: name the customer and confirm the final state.
+
+## Explicit exclusions
+
+No dark mode, chart wall, decorative gradient, glassmorphism, external AI call,
+database, authentication implementation, or paid service.

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useMemo } from "react";
 import { AvatarInitials } from "@/components/relay/avatar-initials";
@@ -31,45 +31,30 @@ function RoleSelect() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col overflow-hidden bg-slate-50 text-slate-900">
+    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
       <header className="relative flex min-h-16 items-center justify-end gap-4 border-b border-slate-200/80 bg-white px-4 sm:px-8">
         <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-4">
-          <BrandLockup className="h-7 w-7" />
+          <BrandLockup className="h-7 w-auto max-w-[120px]" />
           <span className="hidden h-7 w-px bg-slate-200 sm:block" aria-hidden />
-          <MeridianLogo className="h-8 w-8" />
+          <MeridianLogo className="h-7 w-auto max-w-[150px]" />
         </div>
         <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-medium text-slate-600 sm:inline-flex">
           Prototype build
         </span>
       </header>
 
-      <main className="flex flex-1 justify-center px-4 pb-8 pt-0 sm:px-0">
-        <div className="flex w-full flex-col items-center">
-          <section className="relative w-full px-0 sm:px-6 lg:px-10">
-            <div
-              className="relative mx-auto h-[590px] w-full overflow-hidden border-x-0 border-y border-slate-200 bg-white shadow-card sm:h-auto sm:rounded-none"
-              style={{
-                maskImage: "linear-gradient(to bottom, black 0%, black 72%, transparent 100%)",
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, black 0%, black 72%, transparent 100%)",
-              }}
-            >
-              <picture className="block h-full w-full">
-                <source media="(max-width: 639px)" srcSet="/teasers/dispatcher-mobile.png" />
-                <img
-                  src="/teasers/dispatcher-dashboard.png"
-                  alt="RelayOps dispatcher dashboard preview"
-                  className="h-full w-full object-cover object-top sm:h-auto sm:object-contain"
-                />
-              </picture>
-            </div>
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent to-slate-50"
-            />
-          </section>
+      <main className="flex-1">
+        <section className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-8 sm:py-10">
+          <div className="mb-5 text-center">
+            <h1 className="text-xl font-semibold tracking-tight text-slate-950">
+              Choose your role
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Enter the workspace with the decisions that belong to you.
+            </p>
+          </div>
 
-          <section className="-mt-24 w-full max-w-4xl space-y-3 px-4 sm:-mt-28 sm:px-8">
+          <div className="space-y-3">
             <BranchSummary active={metrics.active} critical={metrics.critical} />
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -88,19 +73,44 @@ function RoleSelect() {
                 onClick={() => enter("manager")}
               />
             </div>
-          </section>
-        </div>
+
+            <p className="text-center text-[11px] text-slate-500">
+              Stubbed role login for evaluation · no authentication by design
+            </p>
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-8">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
+            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900">
+                  Dispatcher workspace preview
+                </h2>
+                <p className="mt-0.5 text-[11px] text-slate-500">
+                  SLA-first triage with the next decision kept in view.
+                </p>
+              </div>
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-medium text-slate-600">
+                Prototype
+              </span>
+            </div>
+            <picture className="block max-h-[420px] overflow-hidden">
+              <source media="(max-width: 639px)" srcSet="/teasers/dispatcher-mobile.png" />
+              <img
+                src="/teasers/dispatcher-dashboard.png"
+                alt="RelayOps dispatcher workspace showing SLA-prioritized exceptions"
+                loading="lazy"
+                className="h-full w-full object-cover object-top sm:object-contain"
+              />
+            </picture>
+          </div>
+        </section>
       </main>
 
-      <footer className="flex flex-col gap-2 px-4 py-4 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-        <span className="inline-flex items-center gap-2">
-          <MeridianLogo className="h-6 w-6" />
-          <span className="text-slate-300">·</span>
-          <span>Stubbed role login for evaluation · no authentication by design</span>
-        </span>
-        <Link to="/" className="hover:text-slate-700">
-          Product tour
-        </Link>
+      <footer className="flex items-center justify-center gap-2 border-t border-slate-200 bg-white px-4 py-4 text-[11px] text-slate-500">
+        <MeridianLogo className="h-5 w-auto max-w-[150px]" />
+        <span>Meridian Field Services · connected prototype workspace</span>
       </footer>
     </div>
   );
@@ -108,7 +118,7 @@ function RoleSelect() {
 
 function BranchSummary({ active, critical }: { active: number; critical: number }) {
   return (
-    <div className="relative rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-card backdrop-blur">
+    <div className="relative rounded-2xl border border-slate-200 bg-white p-3 shadow-card">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex -space-x-2">
@@ -124,7 +134,7 @@ function BranchSummary({ active, critical }: { active: number; critical: number 
           </div>
         </div>
         <div className="flex items-center gap-2 text-[11px] font-medium text-slate-500">
-          <MeridianLogo className="h-6 w-6" />
+          <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
           <span>Connected workspace</span>
         </div>
       </div>
@@ -149,7 +159,7 @@ function RoleCard({
     <button
       type="button"
       onClick={onClick}
-      className="group rounded-2xl border border-slate-200 bg-white/95 p-3 text-left shadow-card backdrop-blur transition-colors hover:border-indigo-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
+      className="group rounded-2xl border border-slate-200 bg-white p-3 text-left shadow-card transition-colors hover:border-indigo-200 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
     >
       <div className="flex items-center gap-3">
         <AvatarInitials name={account} size={40} />

@@ -22,7 +22,6 @@ interface RelayState {
   notificationsOpen: boolean;
   commandOpen: boolean;
   collapsedCards: Record<string, boolean>;
-  favoriteFilter: string | null;
 
   setRole: (r: Role) => void;
   setBranch: (id: string) => void;
@@ -34,7 +33,6 @@ interface RelayState {
   markRead: (id: string) => void;
   toggleCardCollapsed: (id: string) => void;
   setCardCollapsed: (id: string, value: boolean) => void;
-  setFavoriteFilter: (branchId: string | null) => void;
 
   escalate: (id: string, reason: string) => void;
   approve: (id: string, note?: string) => void;
@@ -61,7 +59,6 @@ export const useRelayStore = create<RelayState>()(
       notificationsOpen: false,
       commandOpen: false,
       collapsedCards: {},
-      favoriteFilter: null,
 
       toggleCardCollapsed: (id) =>
         set((s) => ({
@@ -73,10 +70,14 @@ export const useRelayStore = create<RelayState>()(
           collapsedCards: { ...s.collapsedCards, [id]: value },
         })),
 
-      setFavoriteFilter: (favoriteFilter) => set({ favoriteFilter }),
-
-      setRole: (role) => set({ role }),
-      setBranch: (activeBranchId) => set({ activeBranchId, favoriteFilter: null }),
+      setRole: (role) =>
+        set({
+          role,
+          drawerExceptionId: null,
+          notificationsOpen: false,
+          commandOpen: false,
+        }),
+      setBranch: (activeBranchId) => set({ activeBranchId }),
       openDrawer: (id) => set({ drawerExceptionId: id }),
       closeDrawer: () => set({ drawerExceptionId: null }),
       toggleNotifications: (v) => set((s) => ({ notificationsOpen: v ?? !s.notificationsOpen })),
@@ -91,9 +92,12 @@ export const useRelayStore = create<RelayState>()(
         })),
 
       escalate: (id, reason) => {
-        const user = get().currentUser.dispatcher;
+        const snapshot = get();
+        if (snapshot.role !== "dispatcher") return;
+        const user = snapshot.currentUser.dispatcher;
         set((s) => {
           const ex = s.exceptions.find((e) => e.id === id);
+          if (!ex || !["open", "assigned", "denied"].includes(ex.status)) return s;
           const branchName = branches.find((b) => b.id === ex?.branchId)?.name ?? "Branch";
           const at = iso();
           return {
@@ -134,9 +138,12 @@ export const useRelayStore = create<RelayState>()(
       },
 
       approve: (id, note) => {
-        const user = get().currentUser.manager;
+        const snapshot = get();
+        if (snapshot.role !== "manager") return;
+        const user = snapshot.currentUser.manager;
         set((s) => {
           const ex = s.exceptions.find((e) => e.id === id);
+          if (!ex || ex.status !== "escalated") return s;
           const branchName = branches.find((b) => b.id === ex?.branchId)?.name ?? "Branch";
           const customer = ex?.customer ?? "the escalation";
           const at = iso();
@@ -181,9 +188,12 @@ export const useRelayStore = create<RelayState>()(
       },
 
       deny: (id, note) => {
-        const user = get().currentUser.manager;
+        const snapshot = get();
+        if (snapshot.role !== "manager") return;
+        const user = snapshot.currentUser.manager;
         set((s) => {
           const ex = s.exceptions.find((e) => e.id === id);
+          if (!ex || ex.status !== "escalated" || note.trim().length < 5) return s;
           const branchName = branches.find((b) => b.id === ex?.branchId)?.name ?? "Branch";
           const at = iso();
           return {
@@ -224,56 +234,69 @@ export const useRelayStore = create<RelayState>()(
       },
 
       assignTechnician: (id, techId) => {
+        const snapshot = get();
+        if (snapshot.role !== "dispatcher") return;
         const tech = technicians.find((t) => t.id === techId);
-        const user = get().currentUser.dispatcher;
+        if (!tech) return;
+        const user = snapshot.currentUser.dispatcher;
         const at = iso();
-        set((s) => ({
-          exceptions: s.exceptions.map((e) =>
-            e.id === id
-              ? {
-                  ...e,
-                  status: e.status === "escalated" ? e.status : "assigned",
-                  assignedTech: techId,
-                  audit: [
-                    ...e.audit,
-                    {
-                      id: uid(),
-                      at,
-                      actor: user,
-                      actorRole: "dispatcher",
-                      action: `Assigned ${tech?.name ?? "technician"}`,
-                    },
-                  ],
-                }
-              : e,
-          ),
-        }));
+        set((s) => {
+          const ex = s.exceptions.find((e) => e.id === id);
+          if (!ex || !["open", "assigned", "approved", "denied"].includes(ex.status)) return s;
+          return {
+            exceptions: s.exceptions.map((e) =>
+              e.id === id
+                ? {
+                    ...e,
+                    status: "assigned",
+                    assignedTech: techId,
+                    audit: [
+                      ...e.audit,
+                      {
+                        id: uid(),
+                        at,
+                        actor: user,
+                        actorRole: "dispatcher",
+                        action: `Assigned ${tech.name}`,
+                      },
+                    ],
+                  }
+                : e,
+            ),
+          };
+        });
       },
 
       resolve: (id, note) => {
-        const user = get().currentUser.dispatcher;
+        const snapshot = get();
+        if (snapshot.role !== "dispatcher") return;
+        const user = snapshot.currentUser.dispatcher;
         const at = iso();
-        set((s) => ({
-          exceptions: s.exceptions.map((e) =>
-            e.id === id
-              ? {
-                  ...e,
-                  status: "resolved",
-                  audit: [
-                    ...e.audit,
-                    {
-                      id: uid(),
-                      at,
-                      actor: user,
-                      actorRole: "dispatcher",
-                      action: "Resolved",
-                      note,
-                    },
-                  ],
-                }
-              : e,
-          ),
-        }));
+        set((s) => {
+          const ex = s.exceptions.find((e) => e.id === id);
+          if (!ex || !["open", "assigned", "approved", "denied"].includes(ex.status)) return s;
+          return {
+            exceptions: s.exceptions.map((e) =>
+              e.id === id
+                ? {
+                    ...e,
+                    status: "resolved",
+                    audit: [
+                      ...e.audit,
+                      {
+                        id: uid(),
+                        at,
+                        actor: user,
+                        actorRole: "dispatcher",
+                        action: "Resolved",
+                        note,
+                      },
+                    ],
+                  }
+                : e,
+            ),
+          };
+        });
       },
 
       addNote: (id, note) => {
@@ -318,7 +341,12 @@ export const useRelayStore = create<RelayState>()(
     {
       name: "relay-ui",
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
+      migrate: (persistedState) => {
+        const migrated = { ...(persistedState as Record<string, unknown>) };
+        delete migrated.favoriteFilter;
+        return migrated as unknown as RelayState;
+      },
       partialize: (s) => ({
         role: s.role,
         activeBranchId: s.activeBranchId,
@@ -327,7 +355,6 @@ export const useRelayStore = create<RelayState>()(
         decisionHistory: s.decisionHistory,
         notifications: s.notifications,
         collapsedCards: s.collapsedCards,
-        favoriteFilter: s.favoriteFilter,
       }),
     },
   ),

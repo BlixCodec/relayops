@@ -96,7 +96,7 @@ export function RecommendationTree({
           <PersonMentionText text={tree.action} />
         </span>
         <span className="rounded-full border border-violet-200/70 bg-white px-2 py-0.5 text-[10px] font-medium text-violet-700">
-          AI suggestion
+          Rule-based prototype
         </span>
       </div>
 
@@ -220,7 +220,7 @@ function Column({ label, children }: { label: string; children: React.ReactNode 
         aria-hidden
         className="absolute -top-3 left-1.5 h-3 border-l border-dashed border-slate-300/80"
       />
-      <h4 className="text-[12px] font-medium text-slate-800">{label}</h4>
+      <p className="text-[12px] font-medium text-slate-800">{label}</p>
       <ul className="relative mt-2 space-y-2 pl-1 before:absolute before:left-1 before:bottom-1 before:top-1 before:border-l before:border-dashed before:border-slate-300/80">
         {children}
       </ul>

@@ -97,7 +97,9 @@ function Decisions() {
                         <span>{e.decision?.by}</span>
                       </span>
                     </Td>
-                    <Td className="tnum text-slate-600">{formatDate(e.decision!.at)}</Td>
+                    <Td className="tnum text-slate-600">
+                      <span suppressHydrationWarning>{formatDate(e.decision!.at)}</span>
+                    </Td>
                     <Td>
                       <StatusPill
                         status={e.decision?.outcome === "approved" ? "approved" : "denied"}

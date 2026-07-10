@@ -1,82 +1,96 @@
 # RelayOps
 
-Exception management for a multi-branch field-service company. Two roles, one
-closed loop: dispatchers triage and escalate; operations managers decide;
-decisions flow back to the floor with a full audit trail.
+Decision-first exception management for a multi-branch field-service company.
+Dispatchers triage and escalate; regional operations managers decide; the
+decision returns to the floor with a complete audit trail.
 
 **Live app:** https://relayops-delta.vercel.app
 
 ## The problem
 
-Meridian Field Services (6 branches, ~140 technicians) loses revenue and
-customer trust when jobs go sideways — missed appointment windows, parts
-delays, repeat-visit callbacks, safety flags. These "exceptions" live in phone
-calls and manager texts. Nobody owns them, SLAs quietly breach.
+Meridian Field Services operates six branches and roughly 140 technicians.
+When a job goes sideways—an equipment failure, missed appointment, repeat
+callback, safety flag, or parts delay—the exception is scattered across calls,
+dispatch notes, and manager texts. Ownership is unclear and SLAs quietly breach.
 
-Meridian doesn't need another ticket tracker. Each role needs one answer:
-**"What do I need to decide next?"**
+Meridian does not need another ticket tracker. Each role needs one answer:
+**What do I need to decide next?**
 
-## Roles
+## Roles and workflow
 
-| Role                              | Decides                                                                                |
-| --------------------------------- | -------------------------------------------------------------------------------------- |
-| **Dispatcher** (branch)           | Priority, technician assignment, when to escalate                                      |
-| **Operations Manager** (regional) | Overtime, cross-branch transfers, goodwill credits — approve or deny with instructions |
+| Role                   | Primary decisions                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| **Dispatcher**         | Triage urgency, assign a technician, escalate work beyond branch authority, resolve the exception |
+| **Operations Manager** | Approve or deny overtime, cross-branch transfers, and customer credits with instructions          |
 
-Both roles make decisions. Nobody just watches a dashboard.
+The core loop is intentionally small:
+
+1. A dispatcher opens the highest-risk exception.
+2. The dispatcher escalates a specific approval request.
+3. The request appears in the manager's decision queue.
+4. The manager approves or denies it with instructions.
+5. Dispatch sees the decision and the complete reasoning in the activity trail.
 
 ## What makes it different
 
-RelayOps is organized around decisions, not records. The dispatcher's screen
-answers "what needs action now"; the manager's screen is a decision queue, not
-a chart wall. One role's action changes the other role's view in real time,
-and the audit trail captures who decided what, and why.
+RelayOps is organized around decisions, not records. The dispatcher experience
+prioritizes SLA risk and the next operational action. The manager experience is
+a decision queue—not a chart wall—and keeps branch health as supporting context.
+One role's action changes what the other role sees immediately.
 
 **Design target:** a dispatcher understands what needs attention within 10
-seconds of landing; a manager resolves an escalation in under 30 seconds.
+seconds; a manager resolves an escalation in under 30 seconds.
 
 ## Deliberately stubbed
 
-Authentication (per the brief — role selection is a stubbed login),
-notifications/SMS, reporting exports, and the technician mobile view. Each stub
-is labeled in the UI. The AI "Suggested action" is rule-based and labeled as
-such — in production, confidence would derive from certification match, travel
-time, and SLA headroom.
+- Authentication: the two predefined role profiles are a stubbed login, as the brief requests.
+- Notifications, SMS, exports, and technician mobile delivery.
+- Server persistence and real-time collaboration. Prototype state is stored only in the current browser.
+- The recommendation is a labeled, rule-based prototype. Production confidence would use certification match, travel time, branch load, and SLA headroom.
 
 ## AI tools used
 
-I used ChatGPT/Codex as an AI pair-programmer to scaffold React components,
-iterate on UI polish, generate realistic seed data, and run QA checks quickly.
-The product decisions came first: the business problem, two-role workflow,
-what each role should decide, what to stub, and the 40-second closed loop were
-defined before implementation. AI accelerated the build; it did not choose the
-problem or the workflow.
+I used Lovable for rapid visual prototyping, Claude Code/Cursor for implementation
+iteration, and ChatGPT/Codex for product review, hardening, and final QA. AI
+accelerated component scaffolding, realistic seed-data iteration, responsive
+polish, and edge-case testing. The product decisions came first: the business
+problem, role boundaries, closed-loop workflow, and what to leave deliberately
+stubbed were defined before implementation.
 
 ## First three production improvements
 
-1. **Real authentication with role-based permissions** — server-enforced RBAC
-   so escalation authority and audit entries are tied to verified identity.
-2. **Persistent store with an append-only audit log** — exception decisions
-   are compliance-relevant; the trail must be immutable and queryable, not
-   React state.
-3. **SLA-driven escalation routing and notifications** — timers that
-   auto-escalate approaching breaches and notify the on-call manager, so the
-   system surfaces risk instead of waiting to be checked.
+1. **Real authentication and role-based permissions** — server-enforced RBAC so authority and audit events are tied to verified identities.
+2. **Durable storage with an append-only audit log** — decisions are operationally significant and must be immutable, queryable, and safe across concurrent users.
+3. **SLA-driven routing and notifications** — automatically route approaching breaches and notify the on-call manager instead of waiting for someone to check a queue.
+
+## Prototype behavior
+
+State persists in browser `localStorage`, including role, exception decisions,
+notifications, and favorites. A fresh browser profile or private window starts
+from the reviewed seed data. No external APIs, paid services, or model calls are
+required to run the prototype.
 
 ## Stack
 
-TanStack Start · Vite · TypeScript · Tailwind · shadcn/ui · Zustand · local
-seed data · Vercel
+TanStack Start · React · TypeScript · Vite · Tailwind CSS · shadcn/ui · Zustand · Vercel
 
-## Prototype notes
+## Local development
 
-RelayOps intentionally uses stubbed role login and in-memory exception state
-for the evaluation. The workflow persists while switching roles in the same
-session; refreshing the page resets exception decisions back to the seed data,
-which is acceptable for the prototype and called out here so review behavior is
-predictable.
+```bash
+npm install
+npm run dev
+```
 
-## Docs
+Quality checks:
 
-- [`docs/decision-doc.md`](docs/decision-doc.md) — problem, roles, workflow, scope decisions
-- [`docs/design-spec.md`](docs/design-spec.md) — tokens, components, interaction rules
+```bash
+npm run build
+npm run lint
+npx tsc --noEmit
+```
+
+## Product documentation
+
+- [`docs/decision-doc.md`](docs/decision-doc.md) — business problem, roles, scope, and workflow decisions
+- [`docs/design-spec.md`](docs/design-spec.md) — current visual and interaction system
+- [`SUBMISSION_CHECKLIST.md`](SUBMISSION_CHECKLIST.md) — challenge-requirement coverage

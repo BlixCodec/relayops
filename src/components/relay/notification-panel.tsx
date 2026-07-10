@@ -214,7 +214,9 @@ function Group({
                     <PersonMentionText text={n.message} />
                   </p>
                   <div className="mt-1 flex items-center gap-2">
-                    <span className="tnum text-[11px] text-slate-500">{relative(n.at)}</span>
+                    <span className="tnum text-[11px] text-slate-500" suppressHydrationWarning>
+                      {relative(n.at)}
+                    </span>
                     {n.exceptionId ? (
                       <span className="text-[11px] font-medium text-indigo-600">
                         {n.actionLabel} ›

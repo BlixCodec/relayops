@@ -16,7 +16,7 @@ const dispatcherNav = [
 const managerNav = [
   { title: "Today", to: "/manager/today", icon: Sun },
   { title: "Queue", to: "/manager", icon: ListChecks },
-  { title: "Escs", to: "/manager/escalations", icon: ClipboardList },
+  { title: "Escal.", to: "/manager/escalations", icon: ClipboardList },
   { title: "Log", to: "/manager/decisions", icon: FileCheck2 },
 ] as const;
 

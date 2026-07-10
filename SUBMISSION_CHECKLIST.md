@@ -1,18 +1,42 @@
 # Submission Checklist
 
-| ✅ Requirement                                               | How RelayOps satisfies it                                                                                                         | Notes / caveats                                                                         |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| ✅ Small web application                                     | RelayOps is a focused exception-management app for a multi-branch field-service company.                                          | Scope is intentionally narrow: one core closed-loop workflow.                           |
-| ✅ Multiple roles                                            | The app supports Dispatcher and Operations Manager contexts.                                                                      | Roles are selected from the role-select screen.                                         |
-| ✅ At least 2 distinct user roles                            | Dispatchers triage, assign, escalate, and resolve; Operations Managers approve or deny escalations.                               | Both roles make decisions instead of passively viewing dashboards.                      |
-| ✅ Role-specific context                                     | Dispatcher screens prioritize SLA urgency and branch work; manager screens prioritize decision queues and branch health.          | Direct role URLs set the matching stub role so refresh/navigation stays understandable. |
-| ✅ No real authentication                                    | The role selector is a stubbed login with predefined users.                                                                       | This is disclosed on the role-select screen and in README.                              |
-| ✅ At least one complete workflow                            | Dispatcher escalates EX-2041, manager approves with a note, and the decision flows back to the dispatcher audit trail.            | State is in memory for the prototype; refresh resets decisions to seed data.            |
-| ✅ Intuitive experience                                      | The app asks one practical question per role: "what needs action now?" for dispatchers and "what needs a decision?" for managers. | The 40-second demo loop is the intended walkthrough.                                    |
-| ✅ Ambiguous business problem resolved with product judgment | RelayOps reframes scattered exception handling as decision-first workflow, not another generic ticket tracker.                    | Branch health is supporting context, not the product center.                            |
-| ✅ Thoughtful workflow over volume                           | The core loop is prioritized over broad feature count.                                                                            | Extra views support QA/review but the submission story should stay on the loop.         |
-| ✅ AI-assisted development represented honestly              | README explains AI was used for scaffolding, UI iteration, seed data, and QA, while product decisions were made up front.         | No claim that AI makes real operational decisions in this prototype.                    |
-| ✅ Portions intentionally stubbed                            | Authentication, notifications/SMS, exports, technician mobile, and persistence are stubbed or local.                              | Stubs are disclosed in README and relevant UI copy.                                     |
-| ✅ Can be hosted for review                                  | The app builds with Vite/TanStack Start and can deploy to Vercel without paid services.                                           | Add the final Vercel URL to README before emailing Jason.                               |
-| ✅ No paid services required                                 | Uses local seed data, in-memory state, free hosting-compatible frontend build, and no external paid APIs.                         | Remote image/font assets are public; no paid keys are required.                         |
-| ✅ Requested submission explanation                          | README includes uniqueness, AI tools used, and first three production improvements.                                               | The email can reuse the README sections directly.                                       |
+## Challenge coverage
+
+| Requirement                         | RelayOps evidence                                                                                       | Status |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
+| Small web application               | Focused exception-management workflow for one fictional multi-branch company                            | ✅     |
+| At least two roles                  | Dispatcher and Operations Manager                                                                       | ✅     |
+| Role-specific context               | SLA-first dispatcher views; authorization-first manager views; role-aware drawer controls               | ✅     |
+| No authentication implementation    | Two predefined role profiles with an explicit no-auth disclosure                                        | ✅     |
+| At least one workflow               | Escalate → manager decision → returned instruction → audit trail                                        | ✅     |
+| Intuitive experience                | Highest-risk work and blocking decisions are prioritized; detailed reasoning is progressively disclosed | ✅     |
+| Hosted or short video               | Vercel deployment plus planned sub-three-minute closed-loop walkthrough                                 | ⏳     |
+| No paid services                    | Local seed data, browser-local state, no external model/API calls                                       | ✅     |
+| Unique app explanation              | README explains the decision-first model                                                                | ✅     |
+| AI tools and influence              | README names the tools and separates AI acceleration from product judgment                              | ✅     |
+| First three production improvements | RBAC, durable append-only storage, SLA routing/notifications                                            | ✅     |
+
+## Submission QA
+
+- [ ] Production URL reflects the final commit.
+- [x] `npm run build` passes.
+- [x] `npx tsc --noEmit` passes.
+- [x] `npm audit --omit=dev` reports no vulnerabilities.
+- [x] `npm run lint` has no errors (13 non-blocking Fast Refresh warnings remain).
+- [x] Final local browser pass has no hydration or console errors.
+- [x] Dispatcher can escalate North Ridge Medical Center.
+- [x] The new escalation appears first in the manager queue.
+- [x] Manager drawer shows Approve/Deny, never dispatcher actions.
+- [x] Approval returns to Dispatch with an updated activity trail.
+- [x] Approved exceptions cannot be escalated again.
+- [x] Deny requires an instruction.
+- [x] Role selector shows both roles without scrolling at desktop and mobile review sizes.
+- [ ] Final video is under three minutes and demonstrates only the closed loop.
+- [ ] Submission email matches the final README wording and names the actual AI tools used.
+
+## Deliberate prototype boundaries
+
+- Authentication, server persistence, real-time collaboration, notifications/SMS,
+  exports, and technician delivery are stubbed or local by design.
+- Browser state persists in `localStorage`; a fresh browser profile starts from seed data.
+- Recommendations and draft polishing are labeled prototype behavior and do not call an external model.

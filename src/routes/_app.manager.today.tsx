@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { ArrowRight, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -35,9 +34,7 @@ function relative(iso: string) {
 }
 
 function ManagerToday() {
-  const navigate = useNavigate();
-  const { exceptions, decisionHistory, openDrawer, setFavoriteFilter, toggleFavorite, role } =
-    useRelayStore();
+  const { exceptions, decisionHistory, openDrawer, toggleFavorite, role } = useRelayStore();
 
   const escalated = exceptions.filter((e) => e.status === "escalated");
   const criticalBranch = branches.filter((b) => b.health === "critical").length;
@@ -127,19 +124,9 @@ function ManagerToday() {
               branches.find((b) => b.id === "west")!,
               branches.find((b) => b.id === "east")!,
             ].map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => {
-                  setFavoriteFilter(b.id);
-                  navigate({ to: "/manager" });
-                  toast(`Filtering decision queue to ${b.name}.`);
-                }}
-                className="rounded-full outline-none transition-transform hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-indigo-500"
-                aria-label={`Filter decision queue to ${b.name}`}
-              >
+              <div key={b.id}>
                 <BranchHealthPill branch={b.name} health={b.health} />
-              </button>
+              </div>
             ))}
           </div>
         </section>
@@ -216,7 +203,10 @@ function ManagerToday() {
                         )}
                       />
                     </button>
-                    <span className="tnum shrink-0 text-[11px] text-slate-400">
+                    <span
+                      className="tnum shrink-0 text-[11px] text-slate-500"
+                      suppressHydrationWarning
+                    >
                       {relative(e.decision!.at)}
                     </span>
                   </div>
