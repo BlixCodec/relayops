@@ -10,7 +10,7 @@
 | No authentication implementation    | Two predefined role profiles with an explicit no-auth disclosure                                        | ✅     |
 | At least one workflow               | Escalate → manager decision → returned instruction → audit trail                                        | ✅     |
 | Intuitive experience                | Highest-risk work and blocking decisions are prioritized; detailed reasoning is progressively disclosed | ✅     |
-| Hosted or short video               | Vercel deployment plus planned sub-three-minute closed-loop walkthrough                                 | ⏳     |
+| Hosted or short video               | Vercel deployment plus planned sub-three-minute closed-loop walkthrough                                 | ✅     |
 | No paid services                    | Local seed data, browser-local state, no external model/API calls                                       | ✅     |
 | Unique app explanation              | README explains the decision-first model                                                                | ✅     |
 | AI tools and influence              | README names the tools and separates AI acceleration from product judgment                              | ✅     |
@@ -18,7 +18,7 @@
 
 ## Submission QA
 
-- [ ] Production URL reflects the final commit.
+- [x] Production URL reflects the final commit.
 - [x] `npm run build` passes.
 - [x] `npx tsc --noEmit` passes.
 - [x] `npm audit --omit=dev` reports no vulnerabilities.
